@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonar City: Radar Raycasting Game</title>
+    <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #111;
+            color: #fff;
+            overflow: hidden;
+        }
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+        #ui-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background: rgba(20, 20, 20, 0.85);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            max-width: 320px;
+            border: 1px solid #333;
+            pointer-events: auto;
+        }
+        h1 { margin: 0 0 10px 0; font-size: 20px; color: #00ffcc; text-transform: uppercase; letter-spacing: 1px; }
+        p { font-size: 13px; color: #ccc; line-height: 1.4; margin: 0 0 15px 0; }
+        .control-group { margin-bottom: 15px; }
+        label { display: block; font-size: 11px; text-transform: uppercase; color: #888; margin-bottom: 5px; }
+        input[type="range"] { width: 100%; accent-color: #00ffcc; }
+        button {
+            width: 100%;
+            background: #00ffcc;
+            color: #111;
+            border: none;
+            padding: 10px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-transform: uppercase;
+        }
+        button:hover { background: #00b392; }
+        #log {
+            margin-top: 15px;
+            max-height: 120px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 11px;
+            color: #00ffcc;
+            border-top: 1px solid #333;
+            padding-top: 10px;
+        }
+        .log-entry { margin-bottom: 4px; color: #aaa;}
+        .log-entry span { color: #fff; font-weight: bold;}
+        #guess-container {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+        }
+        input[type="text"] {
+            width: calc(100% - 16px);
+            padding: 8px;
+            background: #222;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <div id="ui-container">
+        <h1>Sonar City</h1>
+        <p>You are hidden in an un-named global city. Sweep the horizon with your radar to lock onto nearby major cities, map your surroundings, and guess where you are!</p>
+        
+        <div class="control-group">
+            <label id="angle-label">Radar Angle: 0° (North)</label>
+            <input type="range" id="angle-slider" min="0" max="359" value="0">
+        </div>
+
+        <button id="fire-btn">Fire Radar Ray</button>
+
+        <div id="log"></div>
+
+        <div id="guess-container">
+            <label>Make your Guess</label>
+            <input type="text" id="guess-input" placeholder="e.g., Paris, Tokyo, New York...">
+            <button id="guess-btn" style="background: #ff0055; color: white;">Submit Guess</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+    <script>
+        // --- GAME STATE ---
+        const pools = [
+            { name: "Paris", center: [2.3522, 48.8566] },
+            { name: "Berlin", center: [13.4050, 52.5200] },
+            { name: "New York", center: [-74.0060, 40.7128] },
+            { name: "Tokyo", center: [139.6503, 35.6762] }
+        ];
+        
+        const secretCountry = pools[Math.floor(Math.random() * pools.length)];
+        const secretLocation = secretCountry.center; 
+        
+        let citiesGeoJSON = null; 
+        let rayCounter = 0;
+        let discoveredCoordinates = [secretLocation]; // Tracks points to auto-adjust map bounds
+
+        // --- MAP RUNTIME ---
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: 'https://tiles.openfreemap.org/styles/dark', 
+            center: secretLocation, 
+            zoom: 4,
+            minZoom: 2,
+            maxZoom: 7
+        });
+
+        map.dragPan.disable();
+        map.scrollZoom.disable();
+        map.boxZoom.disable();
+        map.doubleClickZoom.disable();
+
+        map.on('load', async () => {
+            // Blindfold map canvas safely without breaking background layers
+            const layers = map.getStyle().layers;
+            layers.forEach(layer => {
+                const shouldHide = layer.type === 'symbol' || layer.id.includes('label') || layer.id.includes('boundary') || layer.id.includes('transportation') || layer.id.includes('building');
+                if (shouldHide) {
+                    try { map.setLayoutProperty(layer.id, 'visibility', 'none'); } catch(e) {}
+                }
+            });
+
+            // 1. Fetch from your custom GitHub repository mapping file
+            try {
+                const response = await fetch('https://mapsmania.github.io/geocoder/cities.json');
+                const rawCitiesArray = await response.json();
+                
+                // Convert your custom flat schema directly into standard GeoJSON point features
+                citiesGeoJSON = {
+                    type: "FeatureCollection",
+                    features: rawCitiesArray.map(c => turf.point([parseFloat(c.lng), parseFloat(c.lat)], { name: c.name }))
+                };
+                console.log(`Successfully mapped ${citiesGeoJSON.features.length} target hubs from custom dataset.`);
+            } catch (err) {
+                console.error("Error loading custom global cities repository database:", err);
+            }
+
+            // Radar Line Vector Canvas Source Layer
+            map.addSource('radar-rays', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+            map.addLayer({
+                id: 'radar-rays-layer',
+                type: 'line',
+                source: 'radar-rays',
+                paint: { 'line-color': '#00ffcc', 'line-width': 2, 'line-opacity': 0.6 }
+            });
+
+            console.log("Sonar initialized. Ready for pings.");
+        });
+
+        // --- INTERACTION CONTROLS ---
+        const slider = document.getElementById('angle-slider');
+        const label = document.getElementById('angle-label');
+        const fireBtn = document.getElementById('fire-btn');
+        const log = document.getElementById('log');
+
+        slider.addEventListener('input', (e) => {
+            label.innerText = `Radar Angle: ${e.target.value}°`;
+        });
+
+        fireBtn.addEventListener('click', () => {
+            if (!citiesGeoJSON) return alert("Radar systems buffering satellite tracking telemetry...");
+            fireRadarRay(parseFloat(slider.value));
+        });
+
+        // --- MATH RAYCASTING ENGINE ---
+        let activeRays = { type: 'FeatureCollection', features: [] };
+
+        function fireRadarRay(bearing) {
+            rayCounter++;
+            const originPoint = turf.point(secretLocation);
+            
+            // Cast ray 6,000km out
+            const distanceKM = 6000; 
+            const destinationPoint = turf.destination(originPoint, distanceKM, bearing, { units: 'kilometers' });
+            const rayLine = turf.lineString([secretLocation, destinationPoint.geometry.coordinates]);
+
+            // Formulate 30km wide vector buffer envelope
+            const radarBeam = turf.buffer(rayLine, 30, { units: 'kilometers' });
+
+            let closestCity = null;
+            let closestDistance = Infinity;
+
+            // Scan spatial dictionary
+            citiesGeoJSON.features.forEach(city => {
+                const isInsideBeam = turf.booleanPointInPolygon(city, radarBeam);
+                
+                if (isInsideBeam) {
+                    const dist = turf.distance(originPoint, city, { units: 'kilometers' });
+                    
+                    // Filter out local central neighborhoods/suburbs within 50km
+                    if (dist > 50) { 
+                        if (dist < closestDistance) {
+                            closestDistance = dist;
+                            closestCity = city;
+                        }
+                    }
+                }
+            });
+
+            // Target Processing Pipeline
+            if (closestCity) {
+                const cityName = closestCity.properties.name;
+                const roundedDist = Math.round(closestDistance);
+                const cityCoords = closestCity.geometry.coordinates;
+
+                // Stop line at target coordinate point
+                const lockRay = turf.lineString([secretLocation, cityCoords]);
+                activeRays.features.push(lockRay);
+                map.getSource('radar-rays').setData(activeRays);
+
+                // Inject Custom Rendered Sonar Label Map Pin
+                new maplibregl.Marker({
+                    element: createCityLabelElement(cityName, roundedDist)
+                })
+                .setLngLat(cityCoords)
+                .addTo(map);
+
+                log.innerHTML = `<div class="log-entry">Ping #${rayCounter} (${bearing}°): Found <span>${cityName}</span> at ${roundedDist} km</div>` + log.innerHTML;
+
+                // Camera Adjustment Pipeline
+                discoveredCoordinates.push(cityCoords);
+                const bounds = new maplibregl.LngLatBounds();
+                discoveredCoordinates.forEach(coord => bounds.extend(coord));
+
+                map.fitBounds(bounds, {
+                    padding: { top: 80, bottom: 80, left: 340, right: 80 }, 
+                    maxZoom: 7, 
+                    duration: 1200 
+                });
+
+            } else {
+                // Keep the canvas map clean on a clear miss: do not push geometry to activeRays.
+                log.innerHTML = `<div class="log-entry" style="color: #ffaa00;">Ping #${rayCounter} (${bearing}°): No city found on this scan</div>` + log.innerHTML;
+            }
+        }
+
+        function createCityLabelElement(name, distance) {
+            const el = document.createElement('div');
+            el.className = 'city-sonar-label';
+            el.style.color = '#ff0055';
+            el.style.background = 'rgba(0,0,0,0.8)';
+            el.style.border = '1px solid #ff0055';
+            el.style.padding = '4px 8px';
+            el.style.fontSize = '11px';
+            el.style.fontFamily = 'monospace';
+            el.style.borderRadius = '3px';
+            el.style.whiteSpace = 'nowrap';
+            el.style.boxShadow = '0 0 8px #ff0055';
+            el.innerHTML = `🎯 ${name}<br>${distance} km`;
+            return el;
+        }
+
+        // --- WIN VALIDATION ---
+        document.getElementById('guess-btn').addEventListener('click', () => {
+            const guessInput = document.getElementById('guess-input').value.trim().toLowerCase();
+            if(!guessInput) return;
+
+            if (guessInput === secretCountry.name.toLowerCase()) {
+                alert(`🎉 Victory! Coordinates verified. You located your base position in ${secretCountry.name} using ${rayCounter} pings!`);
+                const layers = map.getStyle().layers;
+                layers.forEach(layer => map.setLayoutProperty(layer.id, 'visibility', 'visible'));
+                map.dragPan.enable();
+                map.scrollZoom.enable();
+            } else {
+                alert(`❌ Trajectory variance detected. Keep sweeping targets to calibrate your location guess.`);
+            }
+        });
+    </script>
+</body>
+</html>
