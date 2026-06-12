@@ -125,6 +125,7 @@ input {
     border-radius: 8px;
     font-size: 1rem;
     -webkit-appearance: none;
+    text-transform: uppercase;
 }
 
 #result { 
@@ -133,6 +134,17 @@ input {
     text-align: center;
     font-size: 1.05rem;
 }
+
+#city-hint {
+    text-align: center;
+    font-size: 1.4rem;
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+    color: #00ffcc;
+    font-weight: bold;
+    min-height: 30px;
+    text-transform: uppercase;
+}    
 </style>
 </head>
 <body>
@@ -145,7 +157,6 @@ input {
     Use those clues to determine where you are.
     </p>
 
-    <button id="start-btn">Start</button>
 
     <div id="radar-container">
         <svg id="radar" viewBox="0 0 600 600" width="600" height="600">
@@ -159,9 +170,11 @@ input {
     <div id="log"></div>
 
     <div id="guess-container">
-        <label>Guess the hidden city</label>
+    <label>Guess the hidden city</label>
+
+    <div id="city-hint"></div>
         <input id="guess-input" placeholder="Paris, Berlin, Tokyo...">
-        <button id="guess-btn">Submit Guess</button>
+        <button id="guess-btn">Start</button>
         <div id="result"></div>
     </div>
 </div>
@@ -190,16 +203,26 @@ const pools = [
     { name:"Istanbul", center:[28.9784,41.0082] },
     { name:"Mexico City", center:[-99.1332,19.4326] },
     { name:"Toronto", center:[-79.3832,43.6532] },
-    { name:"São Paulo", center:[-46.6333,-23.5505] }
+    { name:"Sao Paulo", center:[-46.6333,-23.5505] }
 ];
 
-let secretCity = pools[Math.floor(Math.random()*pools.length)];
-let secretLocation = secretCity.center;
+let secretCity = null;
+let secretLocation = null;
 let citiesGeoJSON = null;
-let gameOver = false;     
+let gameOver = false; 
+let gameStarted = false;    
+let revealedLetters = [];    
 const log = document.getElementById("log");
 
 let activeRadarCities = [];
+
+function initNewCity() {
+    // Selects a brand new city and sets references without changing the 'pools' array data
+    secretCity = pools[Math.floor(Math.random() * pools.length)];
+    secretLocation = secretCity.center;
+    revealedLetters = [];
+    updateCityHint();
+}
 
 function isOverlapping(a, b) {
     const padding = 4;
@@ -307,7 +330,6 @@ function prepareRadarData(nearestCities) {
         };
     });
 
-    // 2D Force Overlap Relaxation
     for (let iteration = 0; iteration < 100; iteration++) {
         let moved = false;
 
@@ -338,7 +360,6 @@ function prepareRadarData(nearestCities) {
             }
         }
         
-        // Edge clamping constraint checking
         activeRadarCities.forEach(c => {
             if (c.labelX < 15) c.labelX = 15;
             if (c.labelX + c.w > 585) c.labelX = 585 - c.w;
@@ -354,7 +375,6 @@ function plotCity(cityData) {
     const layer = document.getElementById("city-layer");
     const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
-    // FIXED: Corrected reference calculation to prevent script crashes
     const originalLabelX = cityData.dotX + 8;
     const originalLabelY = cityData.dotY - 6;
     const dx = cityData.labelX - originalLabelX;
@@ -393,12 +413,50 @@ function plotCity(cityData) {
     layer.appendChild(group);
 }
 
+function updateCityHint(showAll = false) {
+    if(!secretCity) return;
+    
+    const hint = secretCity.name
+        .split("")
+        .map((char, index) => {
+            if (char === " ") return " ";
+
+            if (showAll || revealedLetters.includes(index)) {
+                // Highlighted change: forced to uppercase
+                return char.toUpperCase();
+            }
+
+            return "_";
+        })
+        .join(" ");
+
+    document.getElementById("city-hint").textContent = hint;
+}
+
+function revealRandomLetter() {
+    const available = [];
+
+    secretCity.name.split("").forEach((char, index) => {
+        if (
+            char !== " " &&
+            !revealedLetters.includes(index)
+        ) {
+            available.push(index);
+        }
+    });
+
+    if (available.length === 0) return;
+
+    const randomIndex =
+        available[Math.floor(Math.random() * available.length)];
+
+    revealedLetters.push(randomIndex);
+    updateCityHint();
+}    
+    
 function resetGame() {
     gameOver = false;
-    const newCity = pools[Math.floor(Math.random()*pools.length)];
-    secretCity.name = newCity.name;
-    secretCity.center = newCity.center;
-    secretLocation = newCity.center;
+    initNewCity(); // Correctly pick a fresh reference
 
     document.getElementById("city-layer").innerHTML = "";
     document.getElementById("log").innerHTML = "";
@@ -406,7 +464,11 @@ function resetGame() {
     document.getElementById("guess-input").value = "";
 
     const btn = document.getElementById("guess-btn");
-    btn.textContent = "Submit Guess";
+
+startRadarSweep();
+
+gameStarted = true;
+btn.textContent = "Submit Guess";
 }    
 
 function startRadarSweep(){
@@ -457,29 +519,56 @@ function startRadarSweep(){
     }, 20);
 }
 
-document.getElementById("start-btn").addEventListener("click", startRadarSweep);
 
-document.getElementById("guess-btn").addEventListener("click", ()=>{
+document.getElementById("guess-btn").addEventListener("click", () => {
+
     const btn = document.getElementById("guess-btn");
     const result = document.getElementById("result");
 
+    // Initial Start
+    if (!gameStarted) {
+        gameStarted = true;
+        startRadarSweep();
+        btn.textContent = "Submit Guess";
+        return;
+    }
+
+    // Play Again state
     if (gameOver) {
         resetGame();
         return;
     }
 
-    const guess = document.getElementById("guess-input").value.trim().toLowerCase();
+    const guess = document.getElementById("guess-input")
+        .value
+        .trim()
+        .toLowerCase();
 
     if (guess === secretCity.name.toLowerCase()) {
-        result.innerHTML = `🎉 Correct! You found ${secretCity.name}`;
+
+        updateCityHint(true);
+
+        result.innerHTML =
+            `🎉 Correct! You found ${secretCity.name}`;
+
         gameOver = true;
         btn.textContent = "Play Again";
+
     } else {
-        result.innerHTML = `❌ Incorrect. Try again.`;
+
+        revealRandomLetter();
+
+        result.innerHTML =
+            `❌ Incorrect! A new letter has been revealed.`;
+
+        document.getElementById("guess-input").value = "";
     }
 });
-
-loadCities();
+// Setup the initial city selection state clean when window finishes loading
+window.addEventListener("load", () => {
+    initNewCity();
+    loadCities();
+});
 </script>
 </body>
 </html>
