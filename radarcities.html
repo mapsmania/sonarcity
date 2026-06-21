@@ -82,6 +82,31 @@ button {
     transition: background 0.2s;
 }
 
+#toggle-filter-btn {
+    background: transparent;
+    color: #00ffcc;
+    border: 1px dashed #00ffcc;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    width: auto;
+    display: inline-block;
+    text-transform: none;
+    border-radius: 20px;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+#toggle-filter-btn:hover, #toggle-filter-btn:active {
+    opacity: 1;
+    background: rgba(0, 255, 204, 0.1);
+    border-style: solid;
+}
+
+/* Hidden by default state */
+.hidden-panel {
+    display: none !important;
+}    
+
 #guess-btn {
     background: #ff0055;
     color: white;
@@ -232,17 +257,20 @@ input {
                 <div id="result"></div>
             </div>
 
-            <p style="margin-top: 15px;">
-            Type a country below to restrict cities, or leave it blank to play globally.
-            </p>
+            <div style="text-align: center; margin-top: 15px;">
+    <button id="toggle-filter-btn">🌐 Set Country Filter</button>
+</div>
 
-            <div id="filter-container">
-                <label for="country-input">Game Location Filter</label>
-                <div class="filter-row">
-                    <input id="country-input" list="countries" placeholder="Curated Cities (Global)">
-                    <datalist id="countries"></datalist>
-                </div>
-            </div>
+<div id="filter-container" class="hidden-panel">
+    <label for="country-input">Restrict Targets to Country</label>
+    <div class="filter-row">
+        <input id="country-input" list="countries" placeholder="e.g., United States, France...">
+        <datalist id="countries"></datalist>
+    </div>
+    <p style="margin: 8px 0 0 0; font-size: 0.8rem; color: #888; text-align: center;">
+        Leave blank to reset to global pool.
+    </p>
+</div>
 
             <div id="log"></div>
         </div>
