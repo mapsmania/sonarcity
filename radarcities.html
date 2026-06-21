@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sonar City</title>
+<style>
+body {
+    margin: 0;
+    background: #111;
+    color: white;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto;
+    min-height: 100vh;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#ui-container {
+    width: 100%;
+    max-width: 640px;
+    background: #181818;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 0 20px rgba(0,255,204,.15);
+    box-sizing: border-box;
+}
+
+h1 { 
+    margin-top: 0; 
+    color: #00ffcc; 
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+p { 
+    color: #aaa; 
+    font-size: 0.95rem; 
+    line-height: 1.4;
+    margin-bottom: 15px;
+}
+
+#filter-container {
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 15px;
+}
+
+.filter-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.filter-row input {
+    margin-bottom: 0 !important;
+}
+
+#filter-container button {
+    width: auto;
+    padding: 12px 20px;
+    background: #00ffcc;
+    color: black;
+    white-space: nowrap;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+
+#guess-btn {
+    background: #ff0055;
+    color: white;
+}
+
+#guess-btn:active {
+    background: #dd0044;
+}
+
+#radar-container {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+    width: 100%;
+}
+
+#radar {
+    width: 100%;
+    height: auto;
+    max-height: 75vw;
+    background: #131313;
+    border-radius: 50%;
+    border: 1px solid #222;
+}
+
+#log {
+    margin-top: 15px;
+    border-top: 1px solid #333;
+    padding-top: 10px;
+    max-height: 140px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+.log-entry { margin-bottom: 6px; }
+.log-entry span { color: #00ffcc; font-weight: bold; }
+
+#guess-container {
+    margin-top: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+    padding: 12px;
+    background: #222;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 8px;
+    font-size: 1rem;
+    -webkit-appearance: none;
+}
+
+#guess-input {
+    text-transform: uppercase;
+}
+
+#result { 
+    margin-top: 10px; 
+    font-weight: bold; 
+    text-align: center;
+    font-size: 1.05rem;
+}
+
+#city-hint {
+    text-align: center;
+    font-size: 1.4rem;
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+    color: #00ffcc;
+    font-weight: bold;
+    min-height: 30px;
+    text-transform: uppercase;
+}   
+
+/* ─── DESKTOP LANDSCAPE ADAPTATIONS ─── */
+@media (min-width: 768px) {
+    body {
+        align-items: center; /* Center dashboard vertically on large monitors */
+    }
+
+    #ui-container {
+        max-width: 960px; /* Expand interface boundary horizontally */
+        padding: 20px;
+    }
+
+    .game-layout {
+        display: flex;
+        gap: 25px;
+        align-items: flex-start;
+    }
+
+    .left-column {
+        flex: 1.1; /* Gives slightly more proportional room to the radar display */
+    }
+
+    .right-column {
+        flex: 0.9;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #radar {
+        max-height: 450px; /* Lock scale constraints to fit neatly beside ui components */
+    }
+
+    #log {
+        max-height: 200px; /* Allow longer text feeds to show on desktop layouts */
+    }
+}
+</style>
+</head>
+<body>
+
+<div id="ui-container">
+    <h1>Sonar City</h1>
+    
+    <div class="game-layout">
+        
+        <div class="left-column">
+            <div id="radar-container">
+                <svg id="radar" viewBox="0 0 600 600" width="600" height="600">
+                    <circle cx="300" cy="300" r="250" fill="none" stroke="#00ffcc" stroke-width="2"/>
+                    <circle cx="300" cy="300" r="5" fill="#00ffcc"/>
+                    <line id="sweep" x1="300" y1="300" x2="300" y2="50" stroke="#00ffcc" stroke-width="3"/>
+                    <g id="city-layer"></g>
+                </svg>
+            </div>
+        </div>
+        
+        <div class="right-column">
+            
+
+            <div id="guess-container">
+                <label>Guess the hidden city</label>
+                <div id="city-hint"></div>
+                <input id="guess-input" placeholder="Paris, Berlin, Tokyo...">
+                <button id="guess-btn">Start Game</button>
+                <div id="result"></div>
+            </div>
+
+            <p style="margin-top: 15px;">
+            Type a country below to restrict cities, or leave it blank to play globally.
+            </p>
+
+            <div id="filter-container">
+                <label for="country-input">Game Location Filter</label>
+                <div class="filter-row">
+                    <input id="country-input" list="countries" placeholder="Curated Cities (Global)">
+                    <datalist id="countries"></datalist>
+                </div>
+            </div>
+
+            <div id="log"></div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+<script src="radarscript.js"></script>
+
+</body>
+</html>
