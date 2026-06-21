@@ -193,13 +193,33 @@ function initNewCity() {
     const countryFilter = document.getElementById("country-input").value.trim().toLowerCase();
     
     if (countryFilter && citiesGeoJSON) {
-        filteredFeaturesPool = citiesGeoJSON.features.filter(f => {
+        let countryMatches = citiesGeoJSON.features.filter(f => {
             const cName = f.properties.countryName.toLowerCase();
             const cCode = f.properties.countryCode.toLowerCase();
-            return cName === countryFilter || cCode === countryFilter;
+            const fCode = f.properties.fc;
+            const cityName = f.properties.name.toLowerCase();
+
+            // Check if it's a match for the country
+            const isCountryMatch = (cName === countryFilter || cCode === countryFilter);
+            
+            if (isCountryMatch) {
+                // If it's the US, filter out boroughs/subdivisions
+                if (cCode === 'us' || cName === 'united states') {
+                    // Skip sub-localities (PPLX) and explicit NYC boroughs
+                    const isBorough = ['brooklyn', 'queens', 'the bronx', 'staten island'].includes(cityName);
+                    const isSubdivision = fCode === 'PPLX';
+                    
+                    if (isBorough || isSubdivision) return false;
+                }
+                return true;
+            }
+            return false;
         });
 
-        if (filteredFeaturesPool.length > 0) {
+        if (countryMatches.length > 0) {
+            countryMatches.sort((a, b) => b.properties.pop - a.properties.pop);
+            filteredFeaturesPool = countryMatches.slice(0, 15);
+
             const randomFeature = filteredFeaturesPool[Math.floor(Math.random() * filteredFeaturesPool.length)];
             secretCity = {
                 name: randomFeature.properties.name,
@@ -218,7 +238,6 @@ function initNewCity() {
     revealedLetters = [];
     updateCityHint();
 }
-
 function isOverlapping(a, b) {
     const padding = 4;
     return !(
@@ -250,14 +269,15 @@ async function loadCities(){
                 }
 
                 return turf.point(
-                    [parseFloat(city.lng), parseFloat(city.lat)],
-                    {
-                        name: city.name,
-                        countryCode: code,
-                        countryName: fullCountryName,
-                        pop: parseInt(city.pop || 0)
-                    }
-                );
+    [parseFloat(city.lng), parseFloat(city.lat)],
+    {
+        name: city.name,
+        countryCode: code,
+        countryName: fullCountryName,
+        pop: parseInt(city.pop || 0),
+        fc: city.fc // <-- Add this line to capture the feature code
+    }
+);
             })
         };
 
@@ -283,12 +303,14 @@ function getLargestNearbyCities(center) {
         if (citiesGeoJSON && citiesGeoJSON.features.length > 0) {
             datasetSource = citiesGeoJSON.features;
         } else {
-            // FIXED: Explicitly break out coordinates into individual arrays to keep Turf parsing clear
             datasetSource = defaultPool.map(c => turf.point([c.center[0], c.center[1]], { name: c.name, pop: 1000000 }));
         }
     } else {
         datasetSource = filteredFeaturesPool;
     }
+
+    // OPTION 1: Expand search radius constraint up to 3000 miles if filtering inside a large country pool
+    const maxRadius = (filteredFeaturesPool.length > 0) ? 3000 : 600;
 
     const candidates = datasetSource
         .map(city => {
@@ -299,7 +321,8 @@ function getLargestNearbyCities(center) {
                 bearing: (bearing + 360) % 360
             };
         })
-        .filter(item => item.distance > 30 && item.distance <= 600)
+        // Filter elements dynamically using the updated maxRadius variable
+        .filter(item => item.distance > 30 && item.distance <= maxRadius)
         .sort((a, b) => b.city.properties.pop - a.city.properties.pop);
 
     const selected = [];
@@ -351,8 +374,8 @@ function prepareRadarData(nearestCities) {
         const dotY = radarCenter - Math.cos(radians) * scaledRadius;
 
         const labelText = `${name} (${Math.round(dist)} mi)`;
-        const labelW = labelText.length * 6.8; 
-        const labelH = 14;
+        const labelW = labelText.length * 8.5; 
+        const labelH = 16;
 
         return {
             name,
@@ -441,7 +464,7 @@ function plotCity(cityData) {
     label.setAttribute("x", cityData.labelX);
     label.setAttribute("y", cityData.labelY);
     label.setAttribute("fill", "#ffffff");
-    label.setAttribute("font-size", "12");
+    label.setAttribute("font-size", "16");
     label.setAttribute("font-weight", "500");
     label.setAttribute("style", "text-shadow: 2px 2px 2px #111, -2px -2px 2px #111;");
     label.textContent = `${cityData.name} (${Math.round(cityData.distance)} mi)`;
