@@ -636,3 +636,21 @@ guessBtn.addEventListener("click", () => {
 window.addEventListener("load", () => {
     loadCities();
 });
+
+document.getElementById("toggle-filter-btn").addEventListener("click", function() {
+    const filterPanel = document.getElementById("filter-container");
+    
+    // Toggle the display class
+    filterPanel.classList.toggle("hidden-panel");
+    
+    // Update button visual state contextually
+    if (filterPanel.classList.contains("hidden-panel")) {
+        this.textContent = "🌐 Set Country Filter";
+        this.style.borderColor = "#00ffcc";
+        this.style.color = "#00ffcc";
+    } else {
+        this.textContent = "❌ Close Filter Settings";
+        this.style.borderColor = "#ff0055";
+        this.style.color = "#ff0055";
+    }
+});
