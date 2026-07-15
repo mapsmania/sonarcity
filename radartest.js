@@ -247,9 +247,10 @@ function initNewCity() {
 
             const randomFeature = filteredFeaturesPool[Math.floor(Math.random() * filteredFeaturesPool.length)];
             secretCity = {
-                name: randomFeature.properties.name,
-                center: randomFeature.geometry.coordinates
-            };
+    name: randomFeature.properties.name,
+    center: randomFeature.geometry.coordinates,
+    countryCode: randomFeature.properties.countryCode
+};
         } else {
             filteredFeaturesPool = [];
             secretCity = defaultPool[Math.floor(Math.random() * defaultPool.length)];
@@ -490,13 +491,27 @@ function plotCity(cityData) {
 function plotWrongGuess(guessName) {
     if (!citiesGeoJSON) return;
 
-    const feature = citiesGeoJSON.features.find(f =>
-        f.properties.name.toLowerCase() === guessName.toLowerCase()
-    );
+    const matches = citiesGeoJSON.features.filter(f =>
+    f.properties.name.toLowerCase() === guessName.toLowerCase()
+);
 
-    if (!feature) return; 
+if (matches.length === 0) return;
 
-    const origin = turf.point(secretLocation);
+const origin = turf.point(secretLocation);
+
+// First try to find a city with the same country as the secret city
+let feature = matches.find(f =>
+    f.properties.countryCode === secretCity.countryCode
+);
+
+// If there isn't one, choose the geographically closest duplicate
+if (!feature) {
+    feature = matches.reduce((closest, candidate) => {
+        const d1 = turf.distance(origin, candidate, { units: "miles" });
+        const d2 = turf.distance(origin, closest, { units: "miles" });
+        return d1 < d2 ? candidate : closest;
+    });
+}
     const distance = turf.distance(origin, feature, { units: "miles" });
 
     let bearing = turf.bearing(origin, feature);
