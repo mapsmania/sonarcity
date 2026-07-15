@@ -175,19 +175,48 @@ const isoCountryMap = {
     "tw": "Taiwan", "tj": "Tajikistan", "tz": "Tanzania, United Republic of", "th": "Thailand", "tl": "Timor-Leste", "tg": "Togo", "tk": "Tokelau", "to": "Tonga", "tt": "Trinidad and Tobago", "tn": "Tunisia", "tr": "Turkey", "tm": "Turkmenistan", "tc": "Turks and Caicos Islands", "tv": "Tuvalu", "ug": "Uganda", "ua": "Ukraine", "ae": "United Arab Emirates", "gb": "United Kingdom", "us": "United States", "um": "United States Minor Outlying Islands", "uy": "Uruguay", "uz": "Uzbekistan", "vu": "Vanuatu", "ve": "Venezuela", "vn": "Viet Nam", "vg": "Virgin Islands, British", "vi": "Virgin Islands, U.S.", "wf": "Wallis and Futuna", "eh": "Western Sahara", "ye": "Yemen", "zm": "Zambia", "zw": "Zimbabwe"
 };
 
-// FIXED: Declare state references explicitly to prevent structural reference errors
+// Global state references variables
 let secretCity = null;
+let wrongGuessCities = [];
 let secretLocation = null;
 let citiesGeoJSON = null;
 let gameOver = false; 
 let gameStarted = false;    
 let revealedLetters = [];
 let attempts = 0;    
+let activeRadarCities = [];
+let filteredFeaturesPool = [];
+
+// DOM references
 const log = document.getElementById("log");
 const guessBtn = document.getElementById("guess-btn");
 
-let activeRadarCities = [];
-let filteredFeaturesPool = [];
+function isOverlapping(a, b) {
+    const padding = 4;
+    return !(
+        a.x + a.w + padding < b.x ||
+        a.x > b.x + b.w + padding ||
+        a.y + a.h + padding < b.y ||
+        a.y > b.y + b.h + padding
+    );
+}
+
+function updateCityHint(showAll = false) {
+    if (!secretCity) return;
+    
+    const hint = secretCity.name
+        .split("")
+        .map((char, index) => {
+            if (char === " ") return " ";
+            if (showAll || revealedLetters.includes(index)) {
+                return char.toUpperCase();
+            }
+            return "_";
+        })
+        .join(" ");
+
+    document.getElementById("city-hint").textContent = hint;
+}
 
 function initNewCity() {
     const countryFilter = document.getElementById("country-input").value.trim().toLowerCase();
@@ -199,16 +228,12 @@ function initNewCity() {
             const fCode = f.properties.fc;
             const cityName = f.properties.name.toLowerCase();
 
-            // Check if it's a match for the country
             const isCountryMatch = (cName === countryFilter || cCode === countryFilter);
             
             if (isCountryMatch) {
-                // If it's the US, filter out boroughs/subdivisions
                 if (cCode === 'us' || cName === 'united states') {
-                    // Skip sub-localities (PPLX) and explicit NYC boroughs
                     const isBorough = ['brooklyn', 'queens', 'the bronx', 'staten island'].includes(cityName);
                     const isSubdivision = fCode === 'PPLX';
-                    
                     if (isBorough || isSubdivision) return false;
                 }
                 return true;
@@ -222,9 +247,10 @@ function initNewCity() {
 
             const randomFeature = filteredFeaturesPool[Math.floor(Math.random() * filteredFeaturesPool.length)];
             secretCity = {
-                name: randomFeature.properties.name,
-                center: randomFeature.geometry.coordinates
-            };
+    name: randomFeature.properties.name,
+    center: randomFeature.geometry.coordinates,
+    countryCode: randomFeature.properties.countryCode
+};
         } else {
             filteredFeaturesPool = [];
             secretCity = defaultPool[Math.floor(Math.random() * defaultPool.length)];
@@ -238,21 +264,11 @@ function initNewCity() {
     revealedLetters = [];
     updateCityHint();
 }
-function isOverlapping(a, b) {
-    const padding = 4;
-    return !(
-        a.x + a.w + padding < b.x ||
-        a.x > b.x + b.w + padding ||
-        a.y + a.h + padding < b.y ||
-        a.y > b.y + b.h + padding
-    );
-}
 
 async function loadCities(){
     try {
         const response = await fetch("https://mapsmania.github.io/geocoder/cities.json");
         const raw = await response.json();
-        
         const countrySet = new Set();
         
         citiesGeoJSON = {
@@ -269,15 +285,15 @@ async function loadCities(){
                 }
 
                 return turf.point(
-    [parseFloat(city.lng), parseFloat(city.lat)],
-    {
-        name: city.name,
-        countryCode: code,
-        countryName: fullCountryName,
-        pop: parseInt(city.pop || 0),
-        fc: city.fc // <-- Add this line to capture the feature code
-    }
-);
+                    [parseFloat(city.lng), parseFloat(city.lat)],
+                    {
+                        name: city.name,
+                        countryCode: code,
+                        countryName: fullCountryName,
+                        pop: parseInt(city.pop || 0),
+                        fc: city.fc
+                    }
+                );
             })
         };
 
@@ -309,7 +325,6 @@ function getLargestNearbyCities(center) {
         datasetSource = filteredFeaturesPool;
     }
 
-    // OPTION 1: Expand search radius constraint up to 3000 miles if filtering inside a large country pool
     const maxRadius = (filteredFeaturesPool.length > 0) ? 3000 : 600;
 
     const candidates = datasetSource
@@ -321,7 +336,6 @@ function getLargestNearbyCities(center) {
                 bearing: (bearing + 360) % 360
             };
         })
-        // Filter elements dynamically using the updated maxRadius variable
         .filter(item => item.distance > 30 && item.distance <= maxRadius)
         .sort((a, b) => b.city.properties.pop - a.city.properties.pop);
 
@@ -474,21 +488,70 @@ function plotCity(cityData) {
     layer.appendChild(group);
 }
 
-function updateCityHint(showAll = false) {
-    if(!secretCity) return;
-    
-    const hint = secretCity.name
-        .split("")
-        .map((char, index) => {
-            if (char === " ") return " ";
-            if (showAll || revealedLetters.includes(index)) {
-                return char.toUpperCase();
-            }
-            return "_";
-        })
-        .join(" ");
+function plotWrongGuess(guessName) {
+    if (!citiesGeoJSON) return;
 
-    document.getElementById("city-hint").textContent = hint;
+    const matches = citiesGeoJSON.features.filter(f =>
+    f.properties.name.toLowerCase() === guessName.toLowerCase()
+);
+
+if (matches.length === 0) return;
+
+const origin = turf.point(secretLocation);
+
+// First try to find a city with the same country as the secret city
+let feature = matches.find(f =>
+    f.properties.countryCode === secretCity.countryCode
+);
+
+// If there isn't one, choose the geographically closest duplicate
+if (!feature) {
+    feature = matches.reduce((closest, candidate) => {
+        const d1 = turf.distance(origin, candidate, { units: "miles" });
+        const d2 = turf.distance(origin, closest, { units: "miles" });
+        return d1 < d2 ? candidate : closest;
+    });
+}
+    const distance = turf.distance(origin, feature, { units: "miles" });
+
+    let bearing = turf.bearing(origin, feature);
+    bearing = (bearing + 360) % 360;
+
+    const radarRadius = 175;
+    const radarCenter = 300;
+
+    const maxDistance = Math.max(
+        ...activeRadarCities.map(c => c.distance),
+        distance
+    ) * 1.1;
+
+    const scaledRadius = Math.min(distance / maxDistance, 1) * radarRadius;
+    const radians = bearing * Math.PI / 180;
+
+    const dotX = radarCenter + Math.sin(radians) * scaledRadius;
+    const dotY = radarCenter - Math.cos(radians) * scaledRadius;
+
+    const layer = document.getElementById("city-layer");
+    const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    dot.setAttribute("cx", dotX);
+    dot.setAttribute("cy", dotY);
+    dot.setAttribute("r", 5);
+    dot.setAttribute("fill", "#ff3333");
+
+    const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    label.setAttribute("x", dotX + 8);
+    label.setAttribute("y", dotY - 6);
+    label.setAttribute("fill", "#ff3333");
+    label.setAttribute("font-size", "16");
+    label.setAttribute("font-weight", "700");
+    label.setAttribute("style", "text-shadow:2px 2px 2px #111;");
+    label.textContent = `${feature.properties.name} (${Math.round(distance)} mi)`;
+
+    group.appendChild(dot);
+    group.appendChild(label);
+    layer.appendChild(group);
 }
 
 function revealRandomLetter() {
@@ -505,24 +568,8 @@ function revealRandomLetter() {
     const randomIndex = available[Math.floor(Math.random() * available.length)];
     revealedLetters.push(randomIndex);
     updateCityHint();
-}     
-    
-function resetGame() {
-    gameOver = false;
-    attempts = 0;
-    
-    document.getElementById("city-layer").innerHTML = "";
-    document.getElementById("log").innerHTML = "";
-    document.getElementById("result").innerHTML = "";
-    document.getElementById("guess-input").value = "";
-
-    initNewCity();
-    
-    startRadarSweep();
-    gameStarted = true;
-    guessBtn.textContent = "Submit Guess";
-}   
-
+}      
+        
 function startRadarSweep(){
     if(!defaultPool.length) return;
 
@@ -536,7 +583,6 @@ function startRadarSweep(){
     const sweep = document.getElementById("sweep");
 
     const timer = setInterval(()=>{
-        // FIXED: Track past position window to catch target coordinates dropped between interval sweeps
         let oldAngle = angle;
         angle += 2;
         
@@ -551,7 +597,6 @@ function startRadarSweep(){
         activeRadarCities.forEach(item => {
             if (item.revealed) return;
 
-            // FIXED: Evaluates if the line crossed over the target's bearing angle slice cleanly
             if (item.trueBearing >= oldAngle && item.trueBearing < angle) {
                 item.revealed = true;
                 plotCity(item);
@@ -575,6 +620,23 @@ function startRadarSweep(){
     }, 20);
 }
 
+function resetGame() {
+    gameOver = false;
+    attempts = 0;
+    
+    document.getElementById("city-layer").innerHTML = "";
+    document.getElementById("log").innerHTML = "";
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("guess-input").value = "";
+
+    initNewCity();
+    
+    startRadarSweep();
+    gameStarted = true;
+    guessBtn.textContent = "Submit Guess";
+}   
+
+// Event Listeners
 guessBtn.addEventListener("click", () => {
     if (!gameStarted) {
         initNewCity();
@@ -619,7 +681,14 @@ guessBtn.addEventListener("click", () => {
         gameOver = true;
         guessBtn.textContent = "Play Again";
     } else {
-        revealRandomLetter();
+        wrongGuessCities.push({
+            name: guess,
+            color: "#ff3333"
+        });
+
+        plotWrongGuess(guess);
+        revealRandomLetter();         
+
         const unrevealed = secretCity.name.split("").filter((char, index) => char !== " " && !revealedLetters.includes(index));
 
         if (unrevealed.length === 0) {
@@ -639,11 +708,8 @@ window.addEventListener("load", () => {
 
 document.getElementById("toggle-filter-btn").addEventListener("click", function() {
     const filterPanel = document.getElementById("filter-container");
-    
-    // Toggle the display class
     filterPanel.classList.toggle("hidden-panel");
     
-    // Update button visual state contextually
     if (filterPanel.classList.contains("hidden-panel")) {
         this.textContent = "🌐 Set Country Filter";
         this.style.borderColor = "#00ffcc";
