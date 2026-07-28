@@ -350,7 +350,7 @@
         .rig__body {
             display: grid;
             grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
-            gap: 22px;
+            gap: 14px 22px;
             padding: 22px 26px;
         }
 
@@ -1203,10 +1203,41 @@
             transform-origin: 300px 300px;
         }
 
-        /* ───────────────────────── responsive ────────────────────────── */
+        /* ───────────────────────── responsive ─────────────────────────
+           One source order, two layouts.
+
+           Wide: two genuine columns. The tube bay holds the scope with the
+           paper tape beneath it. The tape carries flex: 1 up to a ceiling,
+           so it takes up the slack where there is any and scrolls once it
+           is full — the newest line always stays in view. The instrument
+           bay holds the designation panel and the rest of the stack,
+           alongside the scope, at its natural spacing.
+
+           Narrow: both bays are flattened with display: contents, so all
+           eight panels become items of the single-column grid and stack in
+           source order. The tape is the one panel out of place there, so it
+           is ordered last — radar, city name, instruments, then the log.
+           ─────────────────────────────────────────────────────────────── */
+        @media (min-width: 901px) {
+            /* room for a longer log under the wide scope, but still a hard
+               ceiling: past this the tape scrolls rather than growing, so
+               the column never drags the layout out of shape */
+            .bay--scope > .tape {
+                max-height: 320px;
+            }
+        }
+
         @media (max-width: 900px) {
             .rig__body {
                 grid-template-columns: 1fr;
+            }
+
+            .bay {
+                display: contents;
+            }
+
+            .tape {
+                order: 1;
             }
 
             .rig__crown {
@@ -1345,6 +1376,12 @@
                     <div class="crt__screws"><span></span><span></span><span></span><span></span></div>
                 </div>
 
+                <div class="tape" id="tape" aria-live="polite"></div>
+            </section>
+
+            <!-- ══════════════ INSTRUMENT BAY ══════════════ -->
+            <section class="bay bay--instruments">
+
                 <div class="subpanel">
                     <span class="subpanel__legend">TARGET DESIGNATION</span>
                     <div class="tiles" id="hint-tiles"></div>
@@ -1359,10 +1396,6 @@
                     </div>
                     <button class="btn btn--wide" id="new-btn" type="button" disabled>NEW EXPEDITION</button>
                 </div>
-            </section>
-
-            <!-- ══════════════ INSTRUMENT BAY ══════════════ -->
-            <section class="bay bay--instruments">
 
                 <div class="subpanel readouts">
                     <div>
@@ -1445,8 +1478,6 @@
                         <p class="hint-note">Applies when you start the next expedition.</p>
                     </div>
                 </div>
-
-                <div class="tape" id="tape" aria-live="polite"></div>
             </section>
         </div>
 
@@ -2052,6 +2083,7 @@
             line.className = "tape__line" + (item.cls ? " tape__line--" + item.cls : "");
             tape.appendChild(line);
             while (tape.children.length > 90) tape.removeChild(tape.firstChild);
+            tape.scrollTop = tape.scrollHeight;   // keep the newest line in view
 
             const speed = tapeQueue.length > 3 ? 3 : 15;
             let i = 0;
