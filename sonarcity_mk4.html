@@ -1,0 +1,2393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonar City · Triangulation Set Mk IV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700;800&family=Share+Tech+Mono&family=Special+Elite&display=swap" rel="stylesheet">
+    <style>
+             /* ═══════════════════════════════════════════════════════════════
+        HOLLOWAY & VANCE — TRIANGULATION SET, MK IV
+        Palette lives here. Phosphor green appears ONLY inside the tube;
+        the surround is painted metal, cream stencil and amber glass.
+        ═══════════════════════════════════════════════════════════════ */
+             :root {
+                 --hull: #2C3228;
+                 --hull-dark: #191D16;
+                 --panel: #3B4235;
+                 --panel-hi: #4A5243;
+                 --panel-lo: #262B22;
+                 --stencil: #D9D2BC;
+                 --stencil-dim: #8A8B77;
+                 --phosphor: #74FF9C;
+                 --phosphor-lo: #1D5233;
+                 --nixie: #FF9B3D;
+                 --fault: #E24B33;
+                 --brass: #B79A5B;
+                 --decay: 2.6s; /* set by the PERSISTENCE knob */
+
+                 --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+             }
+
+             * {
+                 box-sizing: border-box;
+             }
+
+             body {
+                 margin: 0;
+                 padding: 26px 16px 60px;
+                 background: radial-gradient(120% 90% at 50% -10%, #443f33 0%, #1b1a15 55%, #0d0d0a 100%);
+                 font-family: 'Saira Condensed', 'Arial Narrow', sans-serif;
+                 color: var(--stencil);
+                 -webkit-font-smoothing: antialiased;
+             }
+
+                 body::before { /* dust on the lens */
+                     content: "";
+                     position: fixed;
+                     inset: 0;
+                     background-image: var(--grain);
+                     opacity: .05;
+                     pointer-events: none;
+                     z-index: 999;
+                 }
+
+             /* ─────────────────────────── the case ─────────────────────────── */
+             .rig {
+                 max-width: 1180px;
+                 margin: 0 auto;
+                 background: linear-gradient(178deg, var(--panel-hi) 0%, var(--hull) 12%, var(--hull) 88%, var(--hull-dark) 100%);
+                 background-image: var(--grain), linear-gradient(178deg, var(--panel-hi), var(--hull) 12%, var(--hull) 88%, var(--hull-dark));
+                 background-blend-mode: soft-light, normal;
+                 border-radius: 10px 10px 16px 16px;
+                 border: 1px solid #0c0f0a;
+                 box-shadow: inset 0 1px 0 rgba(255,255,255,.14), inset 0 -3px 12px rgba(0,0,0,.6), 0 30px 70px rgba(0,0,0,.7), 0 2px 0 #0a0c08;
+                 padding: 0 0 4px;
+                 position: relative;
+             }
+                 /* corner protectors */
+                 .rig::before, .rig::after {
+                     content: "";
+                     position: absolute;
+                     top: 0;
+                     width: 46px;
+                     height: 46px;
+                     background: linear-gradient(135deg, #6b6146, #37301f);
+                     opacity: .55;
+                     pointer-events: none;
+                 }
+
+                 .rig::before {
+                     left: 0;
+                     border-radius: 10px 0 60% 0;
+                 }
+
+                 .rig::after {
+                     right: 0;
+                     border-radius: 0 10px 0 60%;
+                     transform: scaleX(-1);
+                 }
+
+             /* ─────────────────────── crown / maker plate ──────────────────── */
+             .rig__crown {
+                 display: grid;
+                 grid-template-columns: 1fr auto 1fr;
+                 align-items: center;
+                 gap: 18px;
+                 padding: 16px 26px 14px;
+                 border-bottom: 2px solid var(--panel-lo);
+                 box-shadow: 0 1px 0 rgba(255,255,255,.07);
+             }
+
+             .maker {
+                 line-height: 1.05;
+             }
+
+             .maker__mark {
+                 color: var(--brass);
+                 font-size: 15px;
+             }
+
+             .maker__name {
+                 display: block;
+                 font-weight: 800;
+                 font-size: 15px;
+                 letter-spacing: .22em;
+                 color: var(--brass);
+             }
+
+             .maker__sub {
+                 display: block;
+                 font-size: 10.5px;
+                 letter-spacing: .3em;
+                 color: var(--stencil-dim);
+                 margin-top: 2px;
+             }
+
+             .rig__title {
+                 margin: 0;
+                 text-align: center;
+                 font-weight: 800;
+                 font-size: clamp(22px, 4.4vw, 40px);
+                 letter-spacing: .3em;
+                 text-indent: .3em;
+                 color: var(--stencil);
+                 text-shadow: 0 1px 0 #10130e, 0 -1px 0 rgba(255,255,255,.16);
+             }
+
+                 .rig__title span {
+                     display: block;
+                     font-size: 10.5px;
+                     font-weight: 600;
+                     letter-spacing: .42em;
+                     text-indent: .42em;
+                     color: var(--stencil-dim);
+                     margin-top: 4px;
+                 }
+
+             /* jewel lamps */
+             .lamps {
+                 display: flex;
+                 gap: 14px;
+                 justify-content: flex-end;
+             }
+
+             .lamp {
+                 text-align: center;
+                 width: 52px;
+             }
+
+                 .lamp i {
+                     display: block;
+                     width: 15px;
+                     height: 15px;
+                     margin: 0 auto 5px;
+                     border-radius: 50%;
+                     background: radial-gradient(circle at 35% 30%, #56604e, #23281f 70%);
+                     box-shadow: inset 0 0 4px #000, 0 0 0 2.5px #22271d, 0 1px 0 rgba(255,255,255,.12);
+                     transition: background .18s, box-shadow .18s;
+                 }
+
+                 .lamp span {
+                     font-size: 8.5px;
+                     letter-spacing: .16em;
+                     color: var(--stencil-dim);
+                     display: block;
+                     font-weight: 600;
+                 }
+
+                 .lamp.is-on i {
+                     background: radial-gradient(circle at 35% 30%, #fff2c4, var(--nixie) 55%, #a1541a 100%);
+                     box-shadow: inset 0 0 4px rgba(120,50,0,.6), 0 0 12px rgba(255,155,61,.85), 0 0 0 2.5px #22271d;
+                 }
+
+                 .lamp.is-on span {
+                     color: var(--stencil);
+                 }
+
+             .lamp--green.is-on i {
+                 background: radial-gradient(circle at 35% 30%, #e6ffe9, #62e88a 55%, #1c6c3a 100%);
+                 box-shadow: inset 0 0 4px rgba(0,60,20,.6), 0 0 12px rgba(98,232,138,.8), 0 0 0 2.5px #22271d;
+             }
+
+             .lamp--red.is-on i {
+                 background: radial-gradient(circle at 35% 30%, #ffd9c9, var(--fault) 55%, #6d1a0c 100%);
+                 box-shadow: inset 0 0 4px rgba(80,10,0,.6), 0 0 14px rgba(226,75,51,.9), 0 0 0 2.5px #22271d;
+                 animation: lampBlink .55s steps(1) 6;
+             }
+
+             @keyframes lampBlink {
+                 50% {
+                     opacity: .25;
+                 }
+             }
+
+             /* ───────────────────────── main body ──────────────────────────── */
+             .rig__body {
+                 display: grid;
+                 grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+                 gap: 22px;
+                 padding: 22px 26px;
+             }
+
+             .bay {
+                 min-width: 0;
+             }
+
+             /* ───────────────────────── the tube ───────────────────────────── */
+             .crt {
+                 position: relative;
+                 padding: 20px;
+                 background: linear-gradient(160deg, #20241c, #14170f 60%, #0c0e09);
+                 border-radius: 14px;
+                 box-shadow: inset 0 2px 5px rgba(0,0,0,.9), inset 0 -1px 0 rgba(255,255,255,.05), 0 1px 0 rgba(255,255,255,.08);
+             }
+
+             .crt__tube {
+                 position: relative;
+                 aspect-ratio: 1;
+                 width: 100%;
+                 border-radius: 50%;
+                 overflow: hidden;
+                 background: radial-gradient(circle at 50% 45%, #0f2318 0%, #08150e 55%, #030805 100%);
+                 box-shadow: inset 0 0 60px rgba(0,0,0,.95), inset 0 0 14px rgba(116,255,156,.07), 0 0 0 9px #101309, 0 0 0 11px #2b3126, 0 0 34px rgba(0,0,0,.8);
+             }
+
+                 .crt__tube > svg {
+                     position: absolute;
+                     inset: 0;
+                     width: 100%;
+                     height: 100%;
+                 }
+
+             /* rotating persistence wedge */
+             .crt__sweep {
+                 position: absolute;
+                 inset: 0;
+                 border-radius: 50%;
+                 background: conic-gradient(from 0deg, rgba(116,255,156,0) 0deg 292deg, rgba(116,255,156,.035) 300deg, rgba(116,255,156,.10) 340deg, rgba(116,255,156,.26) 357deg, rgba(116,255,156,.42) 360deg);
+                 opacity: 0;
+                 transition: opacity .5s;
+                 pointer-events: none;
+                 mix-blend-mode: screen;
+             }
+
+             .crt__scan {
+                 position: absolute;
+                 inset: 0;
+                 pointer-events: none;
+                 opacity: .5;
+                 background: repeating-linear-gradient( to bottom, rgba(0,0,0,.42) 0 1px, rgba(0,0,0,0) 1px 3px);
+             }
+
+             .crt__roll {
+                 position: absolute;
+                 left: 0;
+                 right: 0;
+                 height: 22%;
+                 pointer-events: none;
+                 background: linear-gradient(to bottom, rgba(116,255,156,0), rgba(116,255,156,.055), rgba(116,255,156,0));
+                 animation: roll 7.5s linear infinite;
+                 opacity: 0;
+             }
+
+             @keyframes roll {
+                 from {
+                     top: -25%;
+                 }
+
+                 to {
+                     top: 105%;
+                 }
+             }
+
+             .crt__glare {
+                 position: absolute;
+                 inset: 0;
+                 border-radius: 50%;
+                 pointer-events: none;
+                 background: linear-gradient(128deg, rgba(255,255,255,.09) 0 22%, rgba(255,255,255,0) 46%), radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 52%, rgba(0,0,0,.72) 100%);
+             }
+
+             .crt__off {
+                 position: absolute;
+                 inset: 0;
+                 display: grid;
+                 place-items: center;
+                 font-family: 'Saira Condensed', sans-serif;
+                 font-size: 12px;
+                 letter-spacing: .34em;
+                 color: #46503f;
+                 text-indent: .34em;
+                 background: rgba(3,6,4,.55);
+                 transition: opacity .45s;
+             }
+
+             .rig.is-warm .crt__off {
+                 opacity: 0;
+                 pointer-events: none;
+             }
+
+             .rig.is-warm .crt__roll {
+                 opacity: 1;
+             }
+
+             .rig.is-warm .crt__tube {
+                 animation: tubeFlicker 5.5s infinite steps(1);
+             }
+
+             @keyframes tubeFlicker {
+                 0%, 96%, 100% {
+                     filter: brightness(1);
+                 }
+
+                 97% {
+                     filter: brightness(1.11);
+                 }
+
+                 98.5% {
+                     filter: brightness(.95);
+                 }
+             }
+             /* warm-up: a hairline that blooms into the full raster */
+             .rig.is-booting .crt__tube > svg,
+             .rig.is-booting .crt__sweep {
+                 animation: warmup 1.5s ease-out;
+             }
+
+             @keyframes warmup {
+                 0% {
+                     transform: scaleY(.004) scaleX(.5);
+                     filter: brightness(4) blur(1px);
+                     opacity: 0;
+                 }
+
+                 18% {
+                     transform: scaleY(.004) scaleX(1);
+                     filter: brightness(4) blur(1px);
+                     opacity: 1;
+                 }
+
+                 100% {
+                     transform: scaleY(1) scaleX(1);
+                     filter: brightness(1) blur(0);
+                     opacity: 1;
+                 }
+             }
+
+             /* screws in the bezel corners */
+             .crt__screws span {
+                 position: absolute;
+                 width: 13px;
+                 height: 13px;
+                 border-radius: 50%;
+                 background: radial-gradient(circle at 35% 30%, #8e8f80, #3c3f33 65%, #1b1e17);
+                 box-shadow: inset 0 -1px 1px rgba(0,0,0,.7), 0 1px 0 rgba(255,255,255,.1);
+             }
+
+                 .crt__screws span::after {
+                     content: "";
+                     position: absolute;
+                     inset: 3px 2px;
+                     height: 2px;
+                     top: 50%;
+                     background: #14170f;
+                     border-radius: 1px;
+                     transform: translateY(-50%);
+                 }
+
+                 .crt__screws span:nth-child(1) {
+                     top: 6px;
+                     left: 6px;
+                 }
+
+                 .crt__screws span:nth-child(2) {
+                     top: 6px;
+                     right: 6px;
+                 }
+
+                 .crt__screws span:nth-child(3) {
+                     bottom: 6px;
+                     left: 6px;
+                 }
+
+                 .crt__screws span:nth-child(4) {
+                     bottom: 6px;
+                     right: 6px;
+                 }
+
+                 .crt__screws span:nth-child(2)::after {
+                     transform: translateY(-50%) rotate(64deg);
+                 }
+
+                 .crt__screws span:nth-child(3)::after {
+                     transform: translateY(-50%) rotate(-38deg);
+                 }
+
+                 .crt__screws span:nth-child(4)::after {
+                     transform: translateY(-50%) rotate(21deg);
+                 }
+
+             /* ─────────────────────── knob rail ────────────────────────────── */
+             .knobrail {
+                 display: flex;
+                 gap: 12px;
+                 margin-top: 16px;
+                 padding: 12px 14px;
+                 background: linear-gradient(180deg, var(--panel-hi), var(--panel-lo));
+                 border-radius: 8px;
+                 border: 1px solid #171a13;
+                 box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 2px 4px rgba(0,0,0,.4);
+             }
+
+             .knob {
+                 flex: 1;
+                 background: none;
+                 border: 0;
+                 padding: 0;
+                 cursor: pointer;
+                 display: grid;
+                 justify-items: center;
+                 gap: 5px;
+                 font: inherit;
+                 color: inherit;
+             }
+
+             .knob__dial {
+                 width: 46px;
+                 height: 46px;
+                 border-radius: 50%;
+                 position: relative;
+                 background: radial-gradient(circle at 50% 42%, #4a5044 0 42%, #23281e 44%), repeating-conic-gradient(#3a4034 0 4deg, #262b21 4deg 8deg);
+                 box-shadow: inset 0 -2px 4px rgba(0,0,0,.75), inset 0 2px 2px rgba(255,255,255,.12), 0 2px 4px rgba(0,0,0,.5);
+                 transition: transform .28s cubic-bezier(.34,1.56,.64,1);
+             }
+
+                 .knob__dial::after {
+                     content: "";
+                     position: absolute;
+                     left: 50%;
+                     top: 5px;
+                     width: 3px;
+                     height: 14px;
+                     margin-left: -1.5px;
+                     border-radius: 2px;
+                     background: var(--stencil);
+                     box-shadow: 0 0 4px rgba(217,210,188,.5);
+                 }
+
+             .knob__legend {
+                 font-size: 8.5px;
+                 letter-spacing: .16em;
+                 color: var(--stencil-dim);
+                 font-weight: 600;
+             }
+
+             .knob__value {
+                 font-family: 'Share Tech Mono', monospace;
+                 font-size: 11px;
+                 color: var(--stencil);
+             }
+
+             .knob:focus-visible .knob__dial {
+                 outline: 2px solid var(--nixie);
+                 outline-offset: 3px;
+             }
+
+             /* ─────────────────── instrument column ────────────────────────── */
+             .bay--instruments {
+                 display: flex;
+                 flex-direction: column;
+                 gap: 14px;
+             }
+
+             .subpanel {
+                 background: linear-gradient(180deg, var(--panel-hi) 0%, var(--panel) 40%, var(--panel-lo) 100%);
+                 border: 1px solid #171a13;
+                 border-radius: 8px;
+                 padding: 13px 14px;
+                 box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 2px 5px rgba(0,0,0,.42);
+             }
+
+             .subpanel__legend {
+                 font-size: 9px;
+                 font-weight: 700;
+                 letter-spacing: .26em;
+                 color: var(--stencil-dim);
+                 margin-bottom: 9px;
+                 display: block;
+             }
+
+             /* nixie readouts */
+             .readouts {
+                 display: grid;
+                 grid-template-columns: 1fr 1fr;
+                 gap: 12px;
+             }
+
+             .nixie__row {
+                 display: flex;
+                 align-items: baseline;
+                 gap: 6px;
+             }
+
+             .tubes {
+                 display: flex;
+                 gap: 3px;
+             }
+
+             .tube {
+                 width: 21px;
+                 height: 34px;
+                 border-radius: 3px 3px 5px 5px;
+                 background: linear-gradient(180deg, #16190f, #0a0c07);
+                 box-shadow: inset 0 0 6px #000, inset 0 1px 0 rgba(255,255,255,.06);
+                 display: grid;
+                 place-items: center;
+                 position: relative;
+                 overflow: hidden;
+                 font-family: 'Share Tech Mono', monospace;
+                 font-size: 20px;
+                 line-height: 1;
+                 color: var(--nixie);
+                 text-shadow: 0 0 5px rgba(255,155,61,.95), 0 0 14px rgba(255,120,20,.55);
+             }
+
+                 .tube::after { /* anode mesh */
+                     content: "";
+                     position: absolute;
+                     inset: 0;
+                     background: repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 3px);
+                 }
+
+                 .tube.is-dark {
+                     color: #2d2415;
+                     text-shadow: none;
+                 }
+
+             .unit {
+                 font-size: 9px;
+                 letter-spacing: .18em;
+                 color: var(--stencil-dim);
+                 font-weight: 600;
+             }
+
+             /* signal-strength meter */
+             .meter {
+                 display: grid;
+                 grid-template-columns: 1fr auto;
+                 gap: 12px;
+                 align-items: center;
+             }
+
+             .meter__face {
+                 background: linear-gradient(175deg, #E8E2CC, #C9C1A6);
+                 border-radius: 5px;
+                 border: 1px solid #12150e;
+                 box-shadow: inset 0 0 12px rgba(120,110,80,.45), 0 1px 0 rgba(255,255,255,.1);
+                 padding: 4px;
+             }
+
+                 .meter__face svg {
+                     display: block;
+                     width: 100%;
+                     height: auto;
+                 }
+
+             .counter {
+                 text-align: center;
+             }
+
+             .counter__digits {
+                 display: flex;
+                 gap: 2px;
+                 background: #14170f;
+                 padding: 4px 5px;
+                 border-radius: 3px;
+                 box-shadow: inset 0 1px 4px #000;
+             }
+
+                 .counter__digits span {
+                     font-family: 'Share Tech Mono', monospace;
+                     font-size: 17px;
+                     width: 14px;
+                     text-align: center;
+                     color: var(--stencil);
+                     background: linear-gradient(180deg, #3d4436 0 49%, #2b3026 51% 100%);
+                     border-radius: 2px;
+                 }
+
+             .counter__legend {
+                 font-size: 8px;
+                 letter-spacing: .16em;
+                 color: var(--stencil-dim);
+                 margin-top: 5px;
+                 font-weight: 600;
+             }
+
+             /* switch bank */
+             .switches {
+                 display: grid;
+                 grid-template-columns: repeat(3, 1fr);
+                 gap: 10px;
+             }
+
+             .toggle {
+                 font: inherit;
+                 cursor: pointer;
+                 text-align: center;
+                 padding: 8px 4px 7px;
+                 background: linear-gradient(180deg, #2b3026, #1b1f17);
+                 border: 1px solid #12150e;
+                 border-radius: 6px;
+                 color: var(--stencil-dim);
+                 box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+             }
+
+             .toggle__lever {
+                 width: 26px;
+                 height: 40px;
+                 margin: 0 auto 6px;
+                 border-radius: 13px;
+                 background: linear-gradient(180deg, #0d100b, #1c2017);
+                 box-shadow: inset 0 2px 5px rgba(0,0,0,.9);
+                 position: relative;
+             }
+
+                 .toggle__lever::after {
+                     content: "";
+                     position: absolute;
+                     left: 50%;
+                     margin-left: -8px;
+                     top: 20px;
+                     width: 16px;
+                     height: 16px;
+                     border-radius: 50%;
+                     background: radial-gradient(circle at 35% 28%, #d8d4c4, #8e8a78 60%, #4a4a40);
+                     box-shadow: 0 2px 4px rgba(0,0,0,.7);
+                     transition: top .16s cubic-bezier(.34,1.56,.64,1);
+                 }
+
+             .toggle.is-on {
+                 color: var(--stencil);
+             }
+
+                 .toggle.is-on .toggle__lever::after {
+                     top: 4px;
+                 }
+
+             .toggle__legend {
+                 font-size: 8.5px;
+                 letter-spacing: .17em;
+                 font-weight: 700;
+                 display: block;
+             }
+
+             .toggle__state {
+                 font-family: 'Share Tech Mono', monospace;
+                 font-size: 10px;
+                 color: var(--stencil-dim);
+             }
+
+             .toggle.is-on .toggle__state {
+                 color: var(--nixie);
+             }
+
+             .toggle:focus-visible {
+                 outline: 2px solid var(--nixie);
+                 outline-offset: 2px;
+             }
+
+             /* target designation */
+             .tiles {
+                 display: flex;
+                 flex-wrap: wrap;
+                 gap: 4px;
+                 margin-bottom: 11px;
+                 min-height: 40px;
+             }
+
+             .tile {
+                 width: 25px;
+                 height: 38px;
+                 border-radius: 3px;
+                 position: relative;
+                 background: linear-gradient(180deg, #1f241b 0 48%, #171b13 52% 100%);
+                 box-shadow: inset 0 0 5px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.06);
+                 display: grid;
+                 place-items: center;
+                 font-family: 'Share Tech Mono', monospace;
+                 font-size: 20px;
+                 color: #38402f;
+             }
+
+                 .tile::after {
+                     content: "";
+                     position: absolute;
+                     left: 0;
+                     right: 0;
+                     top: 50%;
+                     height: 1px;
+                     background: rgba(0,0,0,.75);
+                 }
+
+                 .tile.is-lit {
+                     color: var(--phosphor);
+                     text-shadow: 0 0 8px rgba(116,255,156,.85);
+                 }
+
+             .tile--gap {
+                 width: 11px;
+                 background: none;
+                 box-shadow: none;
+             }
+
+                 .tile--gap::after {
+                     display: none;
+                 }
+
+             .tile.is-flip {
+                 animation: flip .34s ease-out;
+             }
+
+             @keyframes flip {
+                 0% {
+                     transform: rotateX(-88deg);
+                 }
+
+                 100% {
+                     transform: rotateX(0);
+                 }
+             }
+
+             .entry {
+                 display: flex;
+                 gap: 8px;
+             }
+
+             #guess-input {
+                 flex: 1;
+                 min-width: 0;
+                 font-family: 'Share Tech Mono', monospace;
+                 font-size: 15px;
+                 letter-spacing: .12em;
+                 text-transform: uppercase;
+                 padding: 10px 11px;
+                 color: var(--phosphor);
+                 background: #0d1109;
+                 border: 1px solid #12150e;
+                 border-radius: 5px;
+                 box-shadow: inset 0 2px 6px rgba(0,0,0,.85);
+             }
+
+                 #guess-input::placeholder {
+                     color: #3c4a38;
+                     letter-spacing: .1em;
+                 }
+
+                 #guess-input:focus {
+                     outline: none;
+                     box-shadow: inset 0 2px 6px rgba(0,0,0,.85), 0 0 0 2px rgba(116,255,156,.4);
+                 }
+
+                 #guess-input:disabled {
+                     color: #384033;
+                 }
+
+             .btn {
+                 font: inherit;
+                 font-weight: 700;
+                 letter-spacing: .17em;
+                 font-size: 12px;
+                 padding: 10px 16px;
+                 cursor: pointer;
+                 color: #16190f;
+                 background: linear-gradient(180deg, #e3dcc2, #b3ab8c);
+                 border: 1px solid #12150e;
+                 border-radius: 5px;
+                 box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 2px 0 #4b4a3c, 0 3px 6px rgba(0,0,0,.5);
+                 transition: transform .07s, box-shadow .07s;
+             }
+
+                 .btn:active {
+                     transform: translateY(2px);
+                     box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 0 0 #4b4a3c, 0 1px 3px rgba(0,0,0,.5);
+                 }
+
+                 .btn:disabled {
+                     opacity: .38;
+                     cursor: not-allowed;
+                 }
+
+             .btn--wide {
+                 width: 100%;
+                 margin-top: 10px;
+             }
+
+             .btn--sector {
+                 background: linear-gradient(180deg, #3f4638, #2a2f23);
+                 color: var(--stencil-dim);
+                 box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 2px 0 #14170f;
+                 letter-spacing: .2em;
+                 font-size: 10px;
+                 width: 100%;
+             }
+
+             .btn:focus-visible {
+                 outline: 2px solid var(--nixie);
+                 outline-offset: 2px;
+             }
+
+             .entry__meta {
+                 display: flex;
+                 justify-content: space-between;
+                 align-items: baseline;
+                 margin-top: 9px;
+                 font-family: 'Share Tech Mono', monospace;
+                 font-size: 11px;
+                 color: var(--stencil-dim);
+                 gap: 10px;
+             }
+
+             #status-line {
+                 color: var(--nixie);
+             }
+
+                 #status-line.is-good {
+                     color: #7BE59B;
+                 }
+
+                 #status-line.is-bad {
+                     color: var(--fault);
+                 }
+
+             #filter-panel {
+                 margin-top: 10px;
+             }
+
+                 #filter-panel[hidden] {
+                     display: none;
+                 }
+
+             #country-input {
+                 width: 100%;
+                 font-family: 'Share Tech Mono', monospace;
+                 font-size: 13px;
+                 padding: 8px 10px;
+                 color: var(--stencil);
+                 background: #0d1109;
+                 border: 1px solid #12150e;
+                 border-radius: 5px;
+                 box-shadow: inset 0 2px 6px rgba(0,0,0,.85);
+             }
+
+                 #country-input:focus {
+                     outline: none;
+                     box-shadow: inset 0 2px 6px rgba(0,0,0,.85), 0 0 0 2px rgba(255,155,61,.4);
+                 }
+
+             .hint-note {
+                 font-size: 10px;
+                 letter-spacing: .1em;
+                 color: var(--stencil-dim);
+                 margin: 7px 0 0;
+             }
+
+             /* paper tape log */
+             .tape {
+                 flex: 1;
+                 min-height: 132px;
+                 max-height: 224px;
+                 overflow-y: auto;
+                 padding: 12px 13px 16px;
+                 background: repeating-linear-gradient(to bottom, rgba(0,0,0,.035) 0 1px, transparent 1px 22px), linear-gradient(180deg, #E6E0CA, #D2CAB0);
+                 background-image: var(--grain), linear-gradient(180deg, #E6E0CA, #D2CAB0);
+                 background-blend-mode: multiply, normal;
+                 border-radius: 3px;
+                 box-shadow: inset 0 2px 8px rgba(90,80,55,.5), 0 1px 0 rgba(255,255,255,.08);
+                 font-family: 'Special Elite', 'Courier New', monospace;
+                 font-size: 11.5px;
+                 line-height: 1.55;
+                 color: #33301F;
+                 scrollbar-width: thin;
+             }
+
+             .tape__line {
+                 white-space: pre-wrap;
+                 word-break: break-word;
+             }
+
+             .tape__line--contact {
+                 color: #1F3A24;
+             }
+
+             .tape__line--neg {
+                 color: #7A2A18;
+             }
+
+             .tape__line--sys {
+                 color: #6A6450;
+                 font-size: 10.5px;
+                 letter-spacing: .06em;
+             }
+
+             .tape__line:last-child::after {
+                 content: "▌";
+                 animation: caret 1s steps(1) infinite;
+                 color: #7A7460;
+             }
+
+             @keyframes caret {
+                 50% {
+                     opacity: 0;
+                 }
+             }
+
+             /* footer data plate */
+             .rig__plate {
+                 display: flex;
+                 flex-wrap: wrap;
+                 justify-content: space-between;
+                 gap: 8px;
+                 margin: 0 26px;
+                 padding: 9px 12px;
+                 border-top: 1px solid rgba(255,255,255,.07);
+                 font-size: 9px;
+                 letter-spacing: .2em;
+                 color: #6E7364;
+             }
+
+                 .rig__plate b {
+                     color: var(--brass);
+                     font-weight: 700;
+                 }
+
+             /* ─────────────────────── trace styling ───────────────────────── */
+             #radar text {
+                 font-family: 'Share Tech Mono', monospace;
+             }
+             /* Phosphor bloom sits on each layer, never on a parent that wraps
+        animated children — nesting filters makes every frame re-render. */
+             #contact-layer, #guess-layer, #fx-layer {
+                 filter: drop-shadow(0 0 4px rgba(116,255,156,.75));
+             }
+
+             #sweep-line, #origin-dot {
+                 filter: drop-shadow(0 0 6px rgba(150,255,190,.9));
+             }
+
+             .crt__sweep {
+                 will-change: transform;
+             }
+
+             .trace-dim {
+                 fill: var(--phosphor-lo);
+                 stroke: var(--phosphor-lo);
+             }
+
+             .contact, .guessmark {
+                 opacity: 0;
+             }
+
+                 .contact.is-live, .guessmark.is-live {
+                     opacity: 1;
+                 }
+
+                 .contact.is-lit {
+                     animation: phosphorDecay var(--decay) ease-out forwards;
+                 }
+
+                 .guessmark.is-lit {
+                     animation: phosphorDecay var(--decay) ease-out forwards;
+                 }
+
+             @keyframes phosphorDecay {
+                 0% {
+                     opacity: 1;
+                     filter: brightness(2.6);
+                 }
+
+                 12% {
+                     opacity: 1;
+                     filter: brightness(1.5);
+                 }
+
+                 100% {
+                     opacity: .42;
+                     filter: brightness(1);
+                 }
+             }
+
+             .blip-ring {
+                 animation: blipRing .85s ease-out forwards;
+                 transform-box: fill-box;
+                 transform-origin: center;
+             }
+
+             @keyframes blipRing {
+                 0% {
+                     transform: scale(.35);
+                     opacity: .95;
+                 }
+
+                 100% {
+                     transform: scale(6);
+                     opacity: 0;
+                 }
+             }
+
+             .fx-fix {
+                 animation: fixIn .8s ease-out forwards;
+                 transform-box: fill-box;
+                 transform-origin: center;
+             }
+
+             @keyframes fixIn {
+                 0% {
+                     opacity: 0;
+                     transform: scale(1.35);
+                 }
+
+                 100% {
+                     opacity: 1;
+                     transform: scale(1);
+                 }
+             }
+
+             #fx-layer {
+                 transform-origin: 300px 300px;
+             }
+
+             /* ───────────────────────── responsive ────────────────────────── */
+             @media (max-width: 900px) {
+                 .rig__body {
+                     grid-template-columns: 1fr;
+                 }
+
+                 .rig__crown {
+                     grid-template-columns: 1fr;
+                     justify-items: center;
+                     text-align: center;
+                     gap: 12px;
+                 }
+
+                 .lamps {
+                     justify-content: center;
+                 }
+
+                 body {
+                     padding: 12px 8px 40px;
+                 }
+
+                 .rig__body {
+                     padding: 16px 14px;
+                 }
+
+                 .rig__plate {
+                     margin: 0 14px;
+                 }
+             }
+
+             @media (max-width: 420px) {
+                 .readouts {
+                     grid-template-columns: 1fr;
+                 }
+
+                 .tube {
+                     width: 18px;
+                     height: 30px;
+                     font-size: 17px;
+                 }
+
+                 .lamp {
+                     width: 44px;
+                 }
+             }
+
+             @media (prefers-reduced-motion: reduce) {
+                 .crt__roll, .rig.is-warm .crt__tube {
+                     animation: none;
+                 }
+
+                 .contact.is-lit, .guessmark.is-lit {
+                     animation: none;
+                     opacity: 1;
+                 }
+
+                 .rig.is-booting .crt__tube > svg, .rig.is-booting .crt__sweep {
+                     animation: none;
+                 }
+
+                 .blip-ring {
+                     animation-duration: .01s;
+                 }
+
+                 .tile.is-flip {
+                     animation: none;
+                 }
+             }
+    </style>
+</head>
+<body>
+    <div class="rig" id="rig">
+
+        <header class="rig__crown">
+            <div class="maker">
+                <span class="maker__mark">◈</span>
+                <span class="maker__name">HOLLOWAY &amp; VANCE</span>
+                <span class="maker__sub">INSTRUMENT WORKS · BRISTOL</span>
+            </div>
+            <h1 class="rig__title">SONAR CITY<span>TRIANGULATION SET · MK IV</span></h1>
+            <div class="lamps">
+                <div class="lamp" id="lamp-power"><i></i><span>POWER</span></div>
+                <div class="lamp lamp--green" id="lamp-sweep"><i></i><span>SWEEP</span></div>
+                <div class="lamp" id="lamp-contact"><i></i><span>CONTACT</span></div>
+                <div class="lamp lamp--red" id="lamp-fault"><i></i><span>FAULT</span></div>
+            </div>
+        </header>
+
+        <div class="rig__body">
+
+            <!-- ══════════════ TUBE BAY ══════════════ -->
+            <section class="bay bay--scope">
+                <div class="crt">
+                    <div class="crt__tube">
+                        <svg id="radar" viewBox="0 0 600 600" role="img"
+                             aria-label="Triangulation scope showing bearing and range to detected cities">
+                            <defs>
+                                <radialGradient id="face">
+                                    <stop offset="60%" stop-color="#0b1c12" stop-opacity="0" />
+                                    <stop offset="100%" stop-color="#040a06" stop-opacity=".9" />
+                                </radialGradient>
+                            </defs>
+
+                            <g id="grid-layer"></g>
+                            <g id="tick-layer"></g>
+                            <circle cx="300" cy="300" r="300" fill="url(#face)" pointer-events="none" />
+
+                            <line id="sweep-line" x1="300" y1="300" x2="300" y2="50"
+                                  stroke="#c9ffd9" stroke-width="2" opacity="0" />
+                            <circle id="origin-dot" cx="300" cy="300" r="3.5" fill="#c9ffd9" />
+                            <g id="contact-layer"></g>
+                            <g id="guess-layer"></g>
+                            <g id="fx-layer"></g>
+                        </svg>
+
+                        <div class="crt__sweep" id="sweep-trail"></div>
+                        <div class="crt__scan"></div>
+                        <div class="crt__roll"></div>
+                        <div class="crt__glare"></div>
+                        <div class="crt__off" id="crt-off">TUBE COLD</div>
+                    </div>
+                    <div class="crt__screws"><span></span><span></span><span></span><span></span></div>
+                </div>
+
+                <div class="knobrail">
+                    <button class="knob" id="knob-rate" type="button">
+                        <span class="knob__dial"></span>
+                        <span class="knob__legend">SWEEP RATE</span>
+                        <span class="knob__value">NORMAL</span>
+                    </button>
+                    <button class="knob" id="knob-persist" type="button">
+                        <span class="knob__dial"></span>
+                        <span class="knob__legend">PERSISTENCE</span>
+                        <span class="knob__value">MEDIUM</span>
+                    </button>
+                    <button class="knob" id="knob-focus" type="button">
+                        <span class="knob__dial"></span>
+                        <span class="knob__legend">FOCUS</span>
+                        <span class="knob__value">SHARP</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ══════════════ INSTRUMENT BAY ══════════════ -->
+            <section class="bay bay--instruments">
+
+                <div class="subpanel readouts">
+                    <div>
+                        <span class="subpanel__legend">BEARING</span>
+                        <div class="nixie__row">
+                            <div class="tubes" id="brg-digits"></div>
+                            <span class="unit">DEG</span>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="subpanel__legend">OUTER RING</span>
+                        <div class="nixie__row">
+                            <div class="tubes" id="rng-digits"></div>
+                            <span class="unit">MI</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subpanel meter">
+                    <div class="meter__face">
+                        <svg viewBox="0 0 160 96" aria-hidden="true">
+                            <path d="M32.5 44.1 A62 62 0 0 1 127.5 44.1"
+                                  fill="none" stroke="#3A3728" stroke-width="1.2" />
+                            <g id="meter-ticks"></g>
+                            <text x="80" y="70" text-anchor="middle" font-family="'Saira Condensed',sans-serif"
+                                  font-size="9" letter-spacing="2" fill="#5B5641">SIGNAL</text>
+                            <text x="80" y="82" text-anchor="middle" font-family="'Saira Condensed',sans-serif"
+                                  font-size="6.5" letter-spacing="1.4" fill="#807A61">RELATIVE STRENGTH</text>
+                            <line id="meter-needle" x1="80" y1="84" x2="80" y2="24"
+                                  stroke="#8E2C1B" stroke-width="1.6" stroke-linecap="round" />
+                            <circle cx="80" cy="84" r="5" fill="#2B2A20" />
+                            <circle cx="80" cy="84" r="2" fill="#8E8368" />
+                        </svg>
+                    </div>
+                    <div class="counter">
+                        <div class="counter__digits" id="contact-count"></div>
+                        <div class="counter__legend">CONTACTS</div>
+                    </div>
+                </div>
+
+                <div class="switches">
+                    <button class="toggle" id="power-switch" type="button" aria-pressed="false">
+                        <span class="toggle__lever"></span>
+                        <span class="toggle__legend">POWER</span>
+                        <span class="toggle__state">OFF</span>
+                    </button>
+                    <button class="toggle" id="sweep-switch" type="button" aria-pressed="false">
+                        <span class="toggle__lever"></span>
+                        <span class="toggle__legend">SWEEP</span>
+                        <span class="toggle__state">OFF</span>
+                    </button>
+                    <button class="toggle is-on" id="audio-switch" type="button" aria-pressed="true">
+                        <span class="toggle__lever"></span>
+                        <span class="toggle__legend">AUDIO</span>
+                        <span class="toggle__state">ON</span>
+                    </button>
+                </div>
+
+                <div class="subpanel">
+                    <span class="subpanel__legend">TARGET DESIGNATION</span>
+                    <div class="tiles" id="hint-tiles"></div>
+                    <div class="entry">
+                        <input id="guess-input" type="text" autocomplete="off" spellcheck="false"
+                               placeholder="NAME THE CITY" disabled aria-label="Name the hidden city">
+                        <button class="btn" id="guess-btn" type="button" disabled>MARK</button>
+                    </div>
+                    <div class="entry__meta">
+                        <span id="status-line">STANDING BY</span>
+                        <span id="attempt-line">MARKS 00</span>
+                    </div>
+                    <button class="btn btn--wide" id="new-btn" type="button" disabled>NEW EXPEDITION</button>
+                </div>
+
+                <div class="subpanel">
+                    <button class="btn btn--sector" id="filter-toggle" type="button">◆ SECTOR RESTRICTION</button>
+                    <div id="filter-panel" hidden>
+                        <input id="country-input" list="countries" autocomplete="off"
+                               placeholder="Country, or blank for the whole world"
+                               aria-label="Restrict the search to one country">
+                        <datalist id="countries"></datalist>
+                        <p class="hint-note">Applies when you start the next expedition.</p>
+                    </div>
+                </div>
+
+                <div class="tape" id="tape" aria-live="polite"></div>
+            </section>
+        </div>
+
+        <footer class="rig__plate">
+            <span>SER. <b>4471-C</b> · 115V 60~ · 210W</span>
+            <span>BEARING REF: TRUE NORTH</span>
+            <span>RANGE UNITS: STATUTE MILES</span>
+            <span><b>DEPT. OF CARTOGRAPHIC SURVEY</b></span>
+        </footer>
+    </div>
+
+    <script>
+
+// const citiesURL = "cities.json";
+const citiesURL = "https://mapsmania.github.io/geocoder/cities.json";
+
+/* ── city data ─────────────────────────────────────────────────
+   Onboard card: used when the remote gazetteer cannot be reached,
+   and as the pool of hidden cities for a worldwide expedition. */
+const defaultPool = [
+    { name:"Paris", center:[2.3522,48.8566] },
+    { name:"Berlin", center:[13.4050,52.5200] },
+    { name:"London", center:[-0.1276,51.5072] },
+    { name:"Madrid", center:[-3.7038,40.4168] },
+    { name:"Rome", center:[12.4964,41.9028] },
+    { name:"New York", center:[-74.0060,40.7128] },
+    { name:"Los Angeles", center:[-118.2437,34.0522] },
+    { name:"Chicago", center:[-87.6298,41.8781] },
+    { name:"San Francisco", center:[-122.4194,37.7749] },
+    { name:"Miami", center:[-80.1918,25.7617] },
+    { name:"Seattle", center:[-122.3321,47.6062] },
+    { name:"Houston", center:[-95.3698,29.7604] },
+    { name:"Tokyo", center:[139.6503,35.6762] },
+    { name:"Beijing", center:[116.4074,39.9042] },
+    { name:"Seoul", center:[126.9780,37.5665] },
+    { name:"Bangkok", center:[100.5018,13.7563] },
+    { name:"Sydney", center:[151.2093,-33.8688] },
+    { name:"Cairo", center:[31.2357,30.0444] },
+    { name:"Istanbul", center:[28.9784,41.0082] },
+    { name:"Mexico City", center:[-99.1332,19.4326] },
+    { name:"Toronto", center:[-79.3832,43.6532] },
+    { name:"Sao Paulo", center:[-46.6333,-23.5505] },
+    { name:"Moscow", center:[37.6173,55.7558] },
+    { name:"Dubai", center:[55.2708,25.2048] },
+    { name:"Mumbai", center:[72.8777,19.0760] },
+    { name:"Delhi", center:[77.2090,28.6139] },
+    { name:"Shanghai", center:[121.4737,31.2304] },
+    { name:"Guangzhou", center:[113.2644,23.1291] },
+    { name:"Jakarta", center:[106.8456,6.2088] },
+    { name:"Manila", center:[120.9842,14.5995] },
+    { name:"Kuala Lumpur", center:[101.6869,3.1390] },
+    { name:"Singapore", center:[103.8198,1.3521] },
+    { name:"Hanoi", center:[105.8342,21.0278] },
+    { name:"Yangon", center:[96.1566,16.8661] },
+    { name:"Dhaka", center:[90.4125,23.8103] },
+    { name:"Karachi", center:[67.0011,24.8607] },
+    { name:"Lahore", center:[74.3587,31.5497] },
+    { name:"Tehran", center:[51.3890,35.6892] },
+    { name:"Baghdad", center:[44.3661,33.3152] },
+    { name:"Riyadh", center:[46.6753,24.7136] },
+    { name:"Kuwait City", center:[47.9774,29.3759] },
+    { name:"Abu Dhabi", center:[54.3773,24.4539] },
+    { name:"Jerusalem", center:[35.2137,31.7683] },
+    { name:"Tel Aviv", center:[34.7818,32.0853] },
+    { name:"Beirut", center:[35.5018,33.8938] },
+    { name:"Damascus", center:[36.2765,33.5138] },
+    { name:"Athens", center:[23.7275,37.9838] },
+    { name:"Belgrade", center:[20.4489,44.7866] },
+    { name:"Sarajevo", center:[18.4131,43.8563] },
+    { name:"Zagreb", center:[15.9819,45.8150] },
+    { name:"Ljubljana", center:[14.5058,46.0569] },
+    { name:"Tirana", center:[19.8182,41.3275] },
+    { name:"Sofia", center:[23.3219,42.6977] },
+    { name:"Bucharest", center:[26.1025,44.4268] },
+    { name:"Budapest", center:[19.0402,47.4979] },
+    { name:"Vienna", center:[16.3738,48.2082] },
+    { name:"Bratislava", center:[17.1077,48.1486] },
+    { name:"Prague", center:[14.4378,50.0755] },
+    { name:"Warsaw", center:[21.0122,52.2297] },
+    { name:"Krakow", center:[19.9445,50.0647] },
+    { name:"Gdansk", center:[18.6753,54.3520] },
+    { name:"Vilnius", center:[25.2799,54.6872] },
+    { name:"Riga", center:[24.1052,56.9496] },
+    { name:"Tallinn", center:[24.7539,59.4370] },
+    { name:"Helsinki", center:[24.9384,60.1699] },
+    { name:"Stockholm", center:[18.0686,59.3293] },
+    { name:"Oslo", center:[10.7522,59.9139] },
+    { name:"Copenhagen", center:[12.5683,55.6761] },
+    { name:"Amsterdam", center:[4.9041,52.3676] },
+    { name:"Rotterdam", center:[4.4777,51.9244] },
+    { name:"Brussels", center:[4.3517,50.8503] },
+    { name:"Antwerp", center:[4.4025,51.2194] },
+    { name:"Luxembourg", center:[6.1296,49.6117] },
+    { name:"Bern", center:[7.4474,46.9480] },
+    { name:"Zurich", center:[8.5417,47.3769] },
+    { name:"Geneva", center:[6.1432,46.2044] },
+    { name:"Munich", center:[11.5820,48.1351] },
+    { name:"Frankfurt", center:[8.6821,50.1109] },
+    { name:"Hamburg", center:[9.9937,53.5511] },
+    { name:"Cologne", center:[6.9603,50.9375] },
+    { name:"Dusseldorf", center:[6.7735,51.2277] },
+    { name:"Milan", center:[9.1900,45.4642] },
+    { name:"Naples", center:[14.2681,40.8518] },
+    { name:"Turin", center:[7.6869,45.0703] },
+    { name:"Florence", center:[11.2558,43.7696] },
+    { name:"Venice", center:[12.3155,45.4408] },
+    { name:"Barcelona", center:[2.1734,41.3851] },
+    { name:"Valencia", center:[0.4203,39.4699] },
+    { name:"Seville", center:[5.9845,37.3891] },
+    { name:"Lisbon", center:[9.1393,38.7223] },
+    { name:"Porto", center:[8.6291,41.1579] },
+    { name:"Dublin", center:[-6.2603,53.3498] },
+    { name:"Cork", center:[-8.4864,51.8985] },
+    { name:"Edinburgh", center:[-3.1883,55.9533] },
+    { name:"Glasgow", center:[-4.2518,55.8642] },
+    { name:"Manchester", center:[-2.2426,53.4808] },
+    { name:"Birmingham", center:[-1.8904,52.4862] },
+    { name:"Liverpool", center:[-2.9916,53.4084] },
+    { name:"Bristol", center:[-2.5879,51.4545] },
+    { name:"Leeds", center:[-1.5491,53.8008] },
+    { name:"Newcastle", center:[-1.6178,54.9783] },
+    { name:"Montreal", center:[-73.5673,45.5019] },
+    { name:"Vancouver", center:[-123.1207,49.2827] },
+    { name:"Ottawa", center:[-75.6972,45.4215] },
+    { name:"Calgary", center:[-114.0719,51.0447] },
+    { name:"Edmonton", center:[-113.4909,53.5461] },
+    { name:"Quebec City", center:[-71.2075,46.8139] },
+    { name:"Winnipeg", center:[-97.1375,49.8951] },
+    { name:"Boston", center:[-71.0598,42.3601] },
+    { name:"Philadelphia", center:[-75.1652,39.9526] },
+    { name:"Washington DC", center:[-77.0369,38.9072] },
+    { name:"Atlanta", center:[-84.3880,33.7490] },
+    { name:"Dallas", center:[-96.7970,32.7767] },
+    { name:"Austin", center:[-97.7431,30.2672] },
+    { name:"Denver", center:[-104.9903,39.7392] },
+    { name:"Phoenix", center:[-112.0740,33.4484] },
+    { name:"Las Vegas", center:[-115.1398,36.1699] },
+    { name:"Portland", center:[-122.6762,45.5152] },
+    { name:"San Diego", center:[-117.1611,32.7157] },
+    { name:"Orlando", center:[-81.3789,28.5383] },
+    { name:"New Orleans", center:[-90.0715,29.9511] },
+    { name:"Nashville", center:[-86.7816,36.1627] },
+    { name:"Detroit", center:[-83.0458,42.3314] },
+    { name:"Minneapolis", center:[-93.2650,44.9778] },
+    { name:"St. Louis", center:[-90.1994,38.6270] },
+    { name:"Salt Lake City", center:[-111.8910,40.7608] },
+    { name:"Buenos Aires", center:[-58.3816,34.6037] },
+    { name:"Cordoba", center:[-64.1888,31.4201] },
+    { name:"Rio de Janeiro", center:[-43.1729,22.9068] },
+    { name:"Brasilia", center:[-47.8822,15.7942] },
+    { name:"Salvador", center:[-38.4814,12.9777] },
+    { name:"Concepcion", center:[-73.0445,36.8201] },
+    { name:"Lima", center:[-77.0428,12.0464] },
+    { name:"Bogota", center:[-74.0721,4.7110] },
+    { name:"Medellin", center:[-75.5698,6.2442] },
+    { name:"Caracas", center:[-66.9036,10.4806] },
+    { name:"La Paz", center:[-68.1193,16.5000] },
+    { name:"Cape Town", center:[18.4241,33.9249] },
+    { name:"Johannesburg", center:[28.0473,26.2041] },
+    { name:"Durban", center:[31.0333,29.8587] },
+    { name:"Pretoria", center:[28.2293,25.7461] },
+    { name:"Nairobi", center:[36.8219,1.2921] },
+    { name:"Dar es Salaam", center:[39.2083,6.7924] },
+    { name:"Casablanca", center:[-7.6320,33.5731] },
+    { name:"Marrakech", center:[-7.9891,31.6345] },
+    { name:"Tangier", center:[-5.8128,35.7595] },
+    { name:"Tunis", center:[10.1815,36.8065] },
+    { name:"Algiers", center:[3.0589,36.7528] },
+    { name:"Tripoli", center:[13.1913,32.8872] },
+    { name:"Benghazi", center:[20.0746,32.1167] },
+    { name:"Khartoum", center:[32.5599,15.5007] },
+    { name:"Dakar", center:[-17.4464,14.7167] },
+    { name:"Auckland", center:[174.7633,-36.8485] },
+    { name:"Wellington", center:[174.7762,-41.2866] },
+    { name:"Christchurch", center:[172.6394,-43.5322] },
+    { name:"Melbourne", center:[144.9631,-37.8136] },
+    { name:"Brisbane", center:[153.0251,-27.4698] },
+    { name:"Perth", center:[115.8570,-31.9505] },
+    { name:"Adelaide", center:[138.6007,-34.9285] },
+    { name:"Hobart", center:[147.3310,-42.8821] },
+    { name:"Canberra", center:[149.1300,-35.2809] }
+];
+
+const isoCountryMap = {
+    "af": "Afghanistan", "ax": "Aland Islands", "al": "Albania", "dz": "Algeria", "as": "American Samoa", "ad": "Andorra", "ao": "Angola", "ai": "Anguilla", "aq": "Antarctica", "ag": "Antigua and Barbuda", "ar": "Argentina", "am": "Armenia", "aw": "Aruba", "au": "Australia", "at": "Austria", "az": "Azerbaijan",
+    "bs": "Bahamas", "bh": "Bahrain", "bd": "Bangladesh", "bb": "Barbados", "by": "Belarus", "be": "Belgium", "bz": "Belize", "bj": "Benin", "bm": "Bermuda", "bt": "Bhutan", "bo": "Bolivia", "bq": "Bonaire, Sint Eustatius and Saba", "ba": "Bosnia and Herzegovina", "bw": "Botswana", "bv": "Bouvet Island", "br": "Brazil", "io": "British Indian Ocean Territory", "bn": "Brunei Darussalam", "bg": "Bulgaria", "bf": "Burkina Faso", "bi": "Burundi",
+    "kh": "Cambodia", "cm": "Cameroon", "ca": "Canada", "cv": "Cape Verde", "ky": "Cayman Islands", "cf": "Central African Republic", "td": "Chad", "cl": "Chile", "cn": "China", "cx": "Christmas Island", "cc": "Cocos (Keeling) Islands", "co": "Colombia", "km": "Comoros", "cg": "Congo", "cd": "Congo, Democratic Republic of the", "ck": "Cook Islands", "cr": "Costa Rica", "ci": "Cote d'Ivoire", "hr": "Croatia", "cu": "Cuba", "cw": "Curaçao", "cy": "Cyprus", "cz": "Czech Republic",
+    "dk": "Denmark", "dj": "Djibouti", "dm": "Dominica", "do": "Dominican Republic", "ec": "Ecuador", "eg": "Egypt", "sv": "El Salvador", "gq": "Equatorial Guinea", "er": "Eritrea", "ee": "Estonia", "et": "Ethiopia", "fk": "Falkland Islands (Malvinas)", "fo": "Faroe Islands", "fj": "Fiji", "fi": "Finland", "fr": "France", "gf": "French Guiana", "pf": "French Polynesia", "tf": "French Southern Territories", "ga": "Gabon", "gm": "Gambia", "ge": "Georgia", "de": "Germany", "gh": "Ghana", "gi": "Gibraltar", "gr": "Greece", "gl": "Greenland", "gd": "Grenada", "gp": "Guadeloupe", "gu": "Guam", "gt": "Guatemala", "gg": "Guernsey", "gn": "Guinea", "gw": "Guinea-Bissau", "gy": "Guyana",
+    "ht": "Haiti", "hm": "Heard Island and McDonald Islands", "va": "Holy See (Vatican City State)", "hn": "Honduras", "hk": "Hong Kong", "hu": "Hungary", "is": "Iceland", "in": "India", "id": "Indonesia", "ir": "Iran, Islamic Republic of", "iq": "Iraq", "ie": "Ireland", "im": "Isle of Man", "il": "Israel", "it": "Italy", "jm": "Jamaica", "jp": "Japan", "je": "Jersey", "jo": "Jordan", "kz": "Kazakhstan", "ke": "Kenya", "ki": "Kiribati", "kp": "Korea, Democratic People's Republic of", "kr": "Korea, Republic of", "kw": "Kuwait", "kg": "Kyrgyzstan",
+    "la": "Lao People's Democratic Republic", "lv": "Latvia", "lb": "Lebanon", "ls": "Lesotho", "lr": "Liberia", "ly": "Libya", "li": "Liechtenstein", "lt": "Lithuania", "lu": "Luxembourg", "mo": "Macao", "mk": "North Macedonia", "mg": "Madagascar", "mw": "Malawi", "my": "Malaysia", "mv": "Maldives", "ml": "Mali", "mt": "Malta", "mh": "Marshall Islands", "mq": "Martinique", "mr": "Mauritania", "mu": "Mauritius", "yt": "Mayotte", "mx": "Mexico", "fm": "Micronesia, Federated States of", "md": "Moldova, Republic of", "mc": "Monaco", "mn": "Mongolia", "me": "Montenegro", "ms": "Montserrat", "ma": "Morocco", "mz": "Mozambique", "mm": "Myanmar", "na": "Namibia", "nr": "Nauru", "np": "Nepal", "nl": "Netherlands", "nc": "New Caledonia", "nz": "New Zealand", "ni": "Nicaragua", "ne": "Niger", "ng": "Nigeria", "nu": "Niue", "nf": "Norfolk Island", "mp": "Northern Mariana Islands", "no": "Norway", "om": "Oman",
+    "pk": "Pakistan", "pw": "Palau", "ps": "Palestine, State of", "pa": "Panama", "pg": "Papua New Guinea", "py": "Paraguay", "pe": "Peru", "ph": "Philippines", "pn": "Pitcairn", "pl": "Poland", "pt": "Portugal", "pr": "Puerto Rico", "qa": "Qatar", "re": "Réunion", "ro": "Romania", "ru": "Russian Federation", "rw": "Rwanda", "bl": "Saint Barthélemy", "sh": "Saint Helena, Ascension and Tristan da Cunha", "kn": "Saint Kitts and Nevis", "lc": "Saint Lucia", "mf": "Saint Martin (French part)", "pm": "Saint Pierre and Miquelon", "vc": "Saint Vincent and the Grenadines", "ws": "Samoa", "sm": "San Marino", "st": "Sao Tome and Principe", "sa": "Saudi Arabia", "sn": "Senegal", "rs": "Serbia", "sc": "Seychelles", "sl": "Sierra Leone", "sg": "Singapore", "sx": "Sint Maarten (Dutch part)", "sk": "Slovakia", "si": "Slovenia", "sb": "Solomon Islands", "so": "Somalia", "za": "South Africa", "gs": "South Georgia and the South Sandwich Islands", "ss": "South Sudan", "es": "Spain", "lk": "Sri Lanka", "sd": "Sudan", "sr": "Suriname", "sj": "Svalbard and Jan Mayen", "sz": "Eswatini", "se": "Sweden", "ch": "Switzerland", "sy": "Syrian Arab Republic",
+    "tw": "Taiwan", "tj": "Tajikistan", "tz": "Tanzania, United Republic of", "th": "Thailand", "tl": "Timor-Leste", "tg": "Togo", "tk": "Tokelau", "to": "Tonga", "tt": "Trinidad and Tobago", "tn": "Tunisia", "tr": "Turkey", "tm": "Turkmenistan", "tc": "Turks and Caicos Islands", "tv": "Tuvalu", "ug": "Uganda", "ua": "Ukraine", "ae": "United Arab Emirates", "gb": "United Kingdom", "us": "United States", "um": "United States Minor Outlying Islands", "uy": "Uruguay", "uz": "Uzbekistan", "vu": "Vanuatu", "ve": "Venezuela", "vn": "Viet Nam", "vg": "Virgin Islands, British", "vi": "Virgin Islands, U.S.", "wf": "Wallis and Futuna", "eh": "Western Sahara", "ye": "Yemen", "zm": "Zambia", "zw": "Zimbabwe"
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   TRIANGULATION SET MK IV — operating logic
+   No external libraries: bearings and ranges are computed here.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 1. spherical geometry ───────────────────────────────────── */
+const EARTH_MILES = 3958.7613;
+const rad = d => d * Math.PI / 180;
+
+function distanceMiles(a, b) {                 // a, b = [lng, lat]
+    const dLat = rad(b[1] - a[1]), dLon = rad(b[0] - a[0]);
+    const h = Math.sin(dLat / 2) ** 2 +
+              Math.cos(rad(a[1])) * Math.cos(rad(b[1])) * Math.sin(dLon / 2) ** 2;
+    return 2 * EARTH_MILES * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+function bearingDeg(a, b) {
+    const f1 = rad(a[1]), f2 = rad(b[1]), dl = rad(b[0] - a[0]);
+    const y = Math.sin(dl) * Math.cos(f2);
+    const x = Math.cos(f1) * Math.sin(f2) - Math.sin(f1) * Math.cos(f2) * Math.cos(dl);
+    return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+
+/* ── 2. scope geometry ───────────────────────────────────────── */
+const CENTRE = 300, PLOT_R = 190, EDGE_R = 250;
+const LABEL_H = 30, LABEL_ABOVE = 15, LABEL_GAP = 11, LABEL_RISE = 4;
+const SVGNS = "http://www.w3.org/2000/svg";
+
+let scaleMiles = 1;                       // miles represented by PLOT_R
+let placedBoxes = [];
+
+const rangeMiles = () => scaleMiles * (EDGE_R / PLOT_R);
+
+function project(distance, bearing) {
+    let r = distance * (PLOT_R / (scaleMiles || 1));
+    const outOfRange = r > EDGE_R;
+    if (outOfRange) r = EDGE_R;
+    const t = rad(bearing);
+    return { x: CENTRE + Math.sin(t) * r, y: CENTRE - Math.cos(t) * r, outOfRange };
+}
+
+function overlaps(a, b) {
+    const p = 4;
+    return !(a.x + a.w + p < b.x || a.x > b.x + b.w + p ||
+             a.y + a.h + p < b.y || a.y > b.y + b.h + p);
+}
+
+/* Top-right of the marker whenever that spot is free. Only when it will not
+   fit does the label mirror left or slide vertically, and only a vertical
+   slide earns a leader line. */
+function findLabelSlot(dotX, dotY, width) {
+    const preferredY = dotY - LABEL_RISE;
+    const options = [];
+    const add = (x, y, anchor) => {
+        const left = anchor === "start" ? x : x - width;
+        if (left < 10 || left + width > 590) return;
+        if (y - LABEL_ABOVE < 12 || y + LABEL_ABOVE > 588) return;
+        options.push({ x, y, anchor, box: { x: left, y: y - LABEL_ABOVE, w: width, h: LABEL_H } });
+    };
+    add(dotX + LABEL_GAP, preferredY, "start");
+    [-36, 24, -60, 48, -84, 72].forEach(dy => add(dotX + LABEL_GAP, dotY + dy, "start"));
+    add(dotX - LABEL_GAP, preferredY, "end");
+    [-36, 24, -60, 48, -84, 72].forEach(dy => add(dotX - LABEL_GAP, dotY + dy, "end"));
+
+    const free = options.find(o => !placedBoxes.some(b => overlaps(o.box, b)));
+    const slot = free || options[0] || {
+        x: dotX + LABEL_GAP, y: preferredY, anchor: "start",
+        box: { x: dotX + LABEL_GAP, y: preferredY - LABEL_ABOVE, w: width, h: LABEL_H }
+    };
+    slot.needsLeader = Math.abs(slot.y - preferredY) > 14;
+    placedBoxes.push(slot.box);
+    return slot;
+}
+
+const el = (name, attrs) => {
+    const node = document.createElementNS(SVGNS, name);
+    for (const k in attrs) node.setAttribute(k, attrs[k]);
+    return node;
+};
+
+/* ── 3. sound: everything synthesised, no samples ────────────── */
+const Sound = {
+    ctx: null, master: null, conv: null, hum: null, humGain: null,
+    enabled: true, ready: false,
+
+    init() {
+        if (this.ctx) return;
+        const Ctor = window.AudioContext || window.webkitAudioContext;
+        if (!Ctor) return;
+        this.ctx = new Ctor();
+        this.master = this.ctx.createGain();
+        this.master.gain.value = 0.85;
+        this.master.connect(this.ctx.destination);
+
+        // cheap plate reverb: decaying noise as an impulse response
+        const len = Math.floor(this.ctx.sampleRate * 1.7);
+        const buf = this.ctx.createBuffer(2, len, this.ctx.sampleRate);
+        for (let ch = 0; ch < 2; ch++) {
+            const d = buf.getChannelData(ch);
+            for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.8);
+        }
+        this.conv = this.ctx.createConvolver();
+        this.conv.buffer = buf;
+        const wet = this.ctx.createGain();
+        wet.gain.value = 0.3;
+        this.conv.connect(wet); wet.connect(this.master);
+        this.ready = true;
+    },
+
+    resume() { if (this.ctx && this.ctx.state === "suspended") this.ctx.resume(); },
+    get on() { return this.ready && this.enabled && this.ctx; },
+
+    noise(duration) {
+        const n = Math.floor(this.ctx.sampleRate * duration);
+        const b = this.ctx.createBuffer(1, n, this.ctx.sampleRate);
+        const d = b.getChannelData(0);
+        for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+        return b;
+    },
+
+    burst(duration, freq, q, vol, type) {
+        if (!this.on) return;
+        const t = this.ctx.currentTime;
+        const src = this.ctx.createBufferSource();
+        src.buffer = this.noise(duration);
+        const filt = this.ctx.createBiquadFilter();
+        filt.type = type || "bandpass";
+        filt.frequency.value = freq;
+        filt.Q.value = q;
+        const g = this.ctx.createGain();
+        g.gain.setValueAtTime(vol, t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+        src.connect(filt); filt.connect(g); g.connect(this.master);
+        src.start(t); src.stop(t + duration);
+    },
+
+    ping(freq, vol) {
+        if (!this.on) return;
+        const t = this.ctx.currentTime;
+        const o = this.ctx.createOscillator();
+        o.type = "sine";
+        o.frequency.setValueAtTime(freq, t);
+        o.frequency.exponentialRampToValueAtTime(freq * 0.8, t + 0.55);
+        const g = this.ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(vol, t + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.8);
+        o.connect(g); g.connect(this.master); g.connect(this.conv);
+        o.start(t); o.stop(t + 0.85);
+    },
+
+    clack()  { this.burst(0.045, 2100, 1.1, 0.30); this.thud(120, 0.12); },
+    tick()   { this.burst(0.008, 3200, 2.0, 0.055); },
+    fault()  { this.burst(0.45, 420, 0.6, 0.22, "lowpass"); this.thud(70, 0.18); },
+
+    thud(freq, vol) {
+        if (!this.on) return;
+        const t = this.ctx.currentTime;
+        const o = this.ctx.createOscillator();
+        o.type = "triangle";
+        o.frequency.setValueAtTime(freq, t);
+        o.frequency.exponentialRampToValueAtTime(freq * 0.55, t + 0.12);
+        const g = this.ctx.createGain();
+        g.gain.setValueAtTime(vol, t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+        o.connect(g); g.connect(this.master);
+        o.start(t); o.stop(t + 0.15);
+    },
+
+    fanfare() {
+        if (!this.on) return;
+        [523.25, 659.25, 783.99, 1046.5].forEach((f, i) =>
+            setTimeout(() => this.ping(f, 0.2), i * 130));
+    },
+
+    warmup() {
+        if (!this.on) return;
+        const t = this.ctx.currentTime;
+        const o = this.ctx.createOscillator();
+        o.type = "sawtooth";
+        o.frequency.setValueAtTime(48, t);
+        o.frequency.exponentialRampToValueAtTime(210, t + 1.1);
+        const f = this.ctx.createBiquadFilter();
+        f.type = "lowpass"; f.frequency.value = 900;
+        const g = this.ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(0.14, t + 0.5);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
+        o.connect(f); f.connect(g); g.connect(this.master);
+        o.start(t); o.stop(t + 1.45);
+    },
+
+    humOn() {
+        if (!this.on || this.hum) return;
+        const t = this.ctx.currentTime;
+        this.humGain = this.ctx.createGain();
+        this.humGain.gain.setValueAtTime(0.0001, t);
+        this.humGain.gain.linearRampToValueAtTime(0.05, t + 1.2);
+        this.humGain.connect(this.master);
+
+        const mains = this.ctx.createOscillator(); mains.type = "sine"; mains.frequency.value = 60;
+        const harm  = this.ctx.createOscillator(); harm.type  = "sine"; harm.frequency.value  = 120;
+        const hg = this.ctx.createGain(); hg.gain.value = 0.4;
+        harm.connect(hg); hg.connect(this.humGain);
+        mains.connect(this.humGain);
+
+        const hiss = this.ctx.createBufferSource();
+        hiss.buffer = this.noise(2); hiss.loop = true;
+        const hf = this.ctx.createBiquadFilter(); hf.type = "bandpass";
+        hf.frequency.value = 5200; hf.Q.value = 0.7;
+        const hg2 = this.ctx.createGain(); hg2.gain.value = 0.12;
+        hiss.connect(hf); hf.connect(hg2); hg2.connect(this.humGain);
+
+        mains.start(t); harm.start(t); hiss.start(t);
+        this.hum = [mains, harm, hiss];
+    },
+
+    humOff() {
+        if (!this.hum) return;
+        const t = this.ctx.currentTime;
+        this.humGain.gain.cancelScheduledValues(t);
+        this.humGain.gain.setValueAtTime(this.humGain.gain.value, t);
+        this.humGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.6);
+        const nodes = this.hum;
+        setTimeout(() => nodes.forEach(n => { try { n.stop(); } catch (e) {} }), 800);
+        this.hum = null;
+    }
+};
+
+/* ── 4. panel references ─────────────────────────────────────── */
+const rig         = document.getElementById("rig");
+const radar       = document.getElementById("radar");
+const gridLayer   = document.getElementById("grid-layer");
+const tickLayer   = document.getElementById("tick-layer");
+const contactLayer= document.getElementById("contact-layer");
+const guessLayer  = document.getElementById("guess-layer");
+const fxLayer     = document.getElementById("fx-layer");
+const sweepLine   = document.getElementById("sweep-line");
+const sweepTrail  = document.getElementById("sweep-trail");
+const meterNeedle = document.getElementById("meter-needle");
+const meterTicks  = document.getElementById("meter-ticks");
+const brgDigits   = document.getElementById("brg-digits");
+const rngDigits   = document.getElementById("rng-digits");
+const contactCount= document.getElementById("contact-count");
+const hintTiles   = document.getElementById("hint-tiles");
+const guessInput  = document.getElementById("guess-input");
+const guessBtn    = document.getElementById("guess-btn");
+const newBtn      = document.getElementById("new-btn");
+const statusLine  = document.getElementById("status-line");
+const attemptLine = document.getElementById("attempt-line");
+const tape        = document.getElementById("tape");
+const countryInput= document.getElementById("country-input");
+const filterPanel = document.getElementById("filter-panel");
+const filterToggle= document.getElementById("filter-toggle");
+const lamps = {
+    power:   document.getElementById("lamp-power"),
+    sweep:   document.getElementById("lamp-sweep"),
+    contact: document.getElementById("lamp-contact"),
+    fault:   document.getElementById("lamp-fault")
+};
+
+/* ── 5. state ────────────────────────────────────────────────── */
+const state = {
+    power: false, sweeping: false, booting: false,
+    phase: "cold",                 // cold | sweeping | play | won | lost
+    secret: null, contacts: [], guesses: [],
+    revealed: [], attempts: 0, sweepAngle: 0, revolutions: 0
+};
+let gazetteer = [];
+let filteredPool = [];
+
+const RATES   = [{ label: "SLOW", v: 42, turn: -50 },
+                 { label: "NORMAL", v: 76, turn: 0 },
+                 { label: "FAST", v: 132, turn: 50 }];
+const PERSIST = [{ label: "SHORT", v: "1.2s", turn: -50 },
+                 { label: "MEDIUM", v: "2.6s", turn: 0 },
+                 { label: "LONG", v: "4.6s", turn: 50 }];
+const FOCUS   = [{ label: "SHARP", v: "none", turn: -30 },
+                 { label: "SOFT", v: "blur(1.1px)", turn: 30 }];
+let rateIdx = 1, persistIdx = 1, focusIdx = 0;
+
+/* ── 6. building the scope face ──────────────────────────────── */
+function buildFace() {
+    for (let i = 1; i <= 4; i++) {
+        const r = EDGE_R * i / 4;
+        gridLayer.appendChild(el("circle", {
+            cx: CENTRE, cy: CENTRE, r, fill: "none",
+            stroke: "var(--phosphor-lo)", "stroke-width": i === 4 ? 1.6 : 0.9,
+            "stroke-dasharray": i === 4 ? "none" : "3 7"
+        }));
+        const label = el("text", {
+            x: CENTRE + 5, y: CENTRE - r + 13, "font-size": 10,
+            fill: "var(--phosphor-lo)", "letter-spacing": 1
+        });
+        label.setAttribute("id", "ring-" + i);
+        gridLayer.appendChild(label);
+    }
+    gridLayer.appendChild(el("line", {
+        x1: CENTRE - EDGE_R, y1: CENTRE, x2: CENTRE + EDGE_R, y2: CENTRE,
+        stroke: "var(--phosphor-lo)", "stroke-width": 0.7, "stroke-dasharray": "2 9"
+    }));
+    gridLayer.appendChild(el("line", {
+        x1: CENTRE, y1: CENTRE - EDGE_R, x2: CENTRE, y2: CENTRE + EDGE_R,
+        stroke: "var(--phosphor-lo)", "stroke-width": 0.7, "stroke-dasharray": "2 9"
+    }));
+
+    for (let a = 0; a < 360; a += 5) {
+        const major = a % 30 === 0, mid = a % 15 === 0;
+        const inner = major ? 232 : mid ? 238 : 243;
+        const t = rad(a);
+        tickLayer.appendChild(el("line", {
+            x1: CENTRE + Math.sin(t) * EDGE_R, y1: CENTRE - Math.cos(t) * EDGE_R,
+            x2: CENTRE + Math.sin(t) * inner,  y2: CENTRE - Math.cos(t) * inner,
+            stroke: "var(--phosphor-lo)", "stroke-width": major ? 1.7 : 0.8
+        }));
+        if (major) {
+            const label = el("text", {
+                x: CENTRE + Math.sin(t) * 217, y: CENTRE - Math.cos(t) * 217 + 4,
+                "text-anchor": "middle", "font-size": 12, fill: "var(--phosphor-lo)"
+            });
+            label.textContent = String(a).padStart(3, "0");
+            tickLayer.appendChild(label);
+        }
+    }
+
+    for (let i = 0; i <= 10; i++) {
+        const ang = -50 + i * 10, t = rad(ang), major = i % 5 === 0;
+        const outer = 62, inner = major ? 51 : 56;
+        meterTicks.appendChild(el("line", {
+            x1: 80 + Math.sin(t) * outer, y1: 84 - Math.cos(t) * outer,
+            x2: 80 + Math.sin(t) * inner, y2: 84 - Math.cos(t) * inner,
+            stroke: i > 7 ? "#8E2C1B" : "#3A3728", "stroke-width": major ? 1.4 : 0.7
+        }));
+    }
+}
+
+function makeTubes(host, count) {
+    host.innerHTML = "";
+    for (let i = 0; i < count; i++) {
+        const t = document.createElement("span");
+        t.className = "tube is-dark";
+        t.textContent = "0";
+        host.appendChild(t);
+    }
+}
+function setTubes(host, value, dark) {
+    const digits = String(Math.max(0, Math.round(value))).padStart(host.children.length, "0")
+                   .slice(-host.children.length);
+    [...host.children].forEach((t, i) => {
+        t.textContent = digits[i];
+        t.classList.toggle("is-dark", !!dark);
+    });
+}
+function makeCounter(host, count) {
+    host.innerHTML = "";
+    for (let i = 0; i < count; i++) {
+        const s = document.createElement("span");
+        s.textContent = "0";
+        host.appendChild(s);
+    }
+}
+function setCounter(host, value) {
+    const digits = String(value).padStart(host.children.length, "0").slice(-host.children.length);
+    [...host.children].forEach((s, i) => { s.textContent = digits[i]; });
+}
+
+/* ── 7. paper tape ───────────────────────────────────────────── */
+const tapeQueue = [];
+let typing = false;
+
+function print(text, cls) {
+    tapeQueue.push({ text, cls });
+    if (!typing) typeNext();
+}
+function typeNext() {
+    const item = tapeQueue.shift();
+    if (!item) { typing = false; return; }
+    typing = true;
+    const line = document.createElement("div");
+    line.className = "tape__line" + (item.cls ? " tape__line--" + item.cls : "");
+    tape.appendChild(line);
+    while (tape.children.length > 90) tape.removeChild(tape.firstChild);
+
+    const speed = tapeQueue.length > 3 ? 3 : 15;
+    let i = 0;
+    const timer = setInterval(() => {
+        line.textContent = item.text.slice(0, ++i);
+        if (i % 3 === 0) Sound.tick();
+        tape.scrollTop = tape.scrollHeight;
+        if (i >= item.text.length) { clearInterval(timer); typeNext(); }
+    }, speed);
+}
+
+/* ── 8. picking a round ──────────────────────────────────────── */
+const norm = s => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                  .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
+function poolForFilter() {
+    const wanted = norm(countryInput.value);
+    if (!wanted || !gazetteer.length) return [];
+    const matches = gazetteer.filter(c => {
+        if (norm(c.countryName) !== wanted && c.countryCode !== wanted) return false;
+        if (c.countryCode === "us") {
+            const borough = ["brooklyn", "queens", "the bronx", "staten island"].includes(norm(c.name));
+            if (borough || c.fc === "PPLX") return false;
+        }
+        return true;
+    });
+    return matches.sort((a, b) => b.pop - a.pop).slice(0, 15);
+}
+
+function pickContacts(centre) {
+    let source;
+    if (filteredPool.length) source = filteredPool;
+    else if (gazetteer.length) source = gazetteer;
+    else source = defaultPool.map(c => ({ name: c.name, coords: c.center, pop: 1e6, countryCode: null }));
+
+    const limit = filteredPool.length ? 3000 : 600;
+    const seen = new Set();
+    const candidates = source
+        .map(c => ({ city: c, distance: distanceMiles(centre, c.coords), bearing: bearingDeg(centre, c.coords) }))
+        .filter(i => {
+            if (i.distance <= 30 || i.distance > limit) return false;
+            const key = norm(i.city.name);
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        })
+        .sort((a, b) => b.city.pop - a.city.pop);
+
+    const chosen = [];
+    for (const c of candidates) {
+        if (chosen.length >= 5) break;
+        const crowded = chosen.some(s => {
+            const d = Math.abs(s.bearing - c.bearing);
+            return Math.min(d, 360 - d) < 25;
+        });
+        if (!crowded) chosen.push(c);
+    }
+    for (const c of candidates) {
+        if (chosen.length >= 5) break;
+        if (!chosen.includes(c)) chosen.push(c);
+    }
+    return chosen;
+}
+
+/* ── 9. drawing contacts and marks ───────────────────────────── */
+function labelWidth(a, b) {
+    return Math.max(a.length * 10.2, b.length * 7.4);
+}
+
+function drawTrace(layer, opts) {
+    const g = el("g", { class: opts.kind === "guess" ? "guessmark" : "contact" });
+    const pos = project(opts.distance, opts.bearing);
+    const line1 = opts.name.toUpperCase();
+    const line2 = (opts.kind === "guess" ? "NEG · " : "") +
+                  "RNG " + Math.round(opts.distance) + "  BRG " + String(Math.round(opts.bearing)).padStart(3, "0");
+    const slot = findLabelSlot(pos.x, pos.y, labelWidth(line1, line2));
+
+    if (pos.outOfRange) {                       // beyond the outer ring
+        const t = rad(opts.bearing);
+        g.appendChild(el("line", {
+            x1: pos.x, y1: pos.y,
+            x2: CENTRE + Math.sin(t) * (EDGE_R + 17), y2: CENTRE - Math.cos(t) * (EDGE_R + 17),
+            stroke: "var(--phosphor)", "stroke-width": 2.5, "stroke-linecap": "round"
+        }));
+    }
+    if (slot.needsLeader) {
+        g.appendChild(el("line", {
+            x1: pos.x, y1: pos.y, x2: slot.x, y2: slot.y - 4,
+            stroke: "var(--phosphor)", "stroke-width": 0.8,
+            "stroke-dasharray": "3 4", opacity: .5
+        }));
+    }
+
+    if (opts.kind === "guess") {                // hollow diamond + dashed ring
+        g.appendChild(el("path", {
+            d: `M${pos.x} ${pos.y - 7} L${pos.x + 7} ${pos.y} L${pos.x} ${pos.y + 7} L${pos.x - 7} ${pos.y} Z`,
+            fill: "none", stroke: "var(--phosphor)", "stroke-width": 1.8
+        }));
+        g.appendChild(el("circle", {
+            cx: pos.x, cy: pos.y, r: 12, fill: "none", stroke: "var(--phosphor)",
+            "stroke-width": 1, "stroke-dasharray": "2 4", opacity: .75
+        }));
+    } else {                                    // solid blip + halo
+        g.appendChild(el("circle", { cx: pos.x, cy: pos.y, r: 5, fill: "var(--phosphor)" }));
+        g.appendChild(el("circle", {
+            cx: pos.x, cy: pos.y, r: 10, fill: "none",
+            stroke: "var(--phosphor)", "stroke-width": 0.9, opacity: .6
+        }));
+    }
+
+    const t1 = el("text", {
+        x: slot.x, y: slot.y, "text-anchor": slot.anchor,
+        "font-size": 17, fill: "var(--phosphor)", "letter-spacing": 1.2
+    });
+    t1.textContent = line1;
+    const t2 = el("text", {
+        x: slot.x, y: slot.y + 15, "text-anchor": slot.anchor,
+        "font-size": 12, fill: "var(--phosphor)", opacity: .8, "letter-spacing": .6
+    });
+    t2.textContent = line2;
+    g.appendChild(t1); g.appendChild(t2);
+    layer.appendChild(g);
+    return { g, pos };
+}
+
+function relight(node) {
+    node.classList.remove("is-lit");
+    node.getBoundingClientRect();
+    node.classList.add("is-lit");
+}
+
+function flashRing(x, y) {
+    const ring = el("circle", {
+        cx: x, cy: y, r: 4, fill: "none",
+        stroke: "var(--phosphor)", "stroke-width": 3, class: "blip-ring"
+    });
+    fxLayer.appendChild(ring);
+    setTimeout(() => ring.remove(), 900);
+}
+
+/* ── 10. the sweep ───────────────────────────────────────────── */
+let lastFrame = 0, needle = 0, lastBearing = -1;
+
+function crossed(from, to, target) {
+    return to >= from ? (target > from && target <= to) : (target > from || target <= to);
+}
+
+function frame(now) {
+    const dt = Math.min(0.06, (now - lastFrame) / 1000 || 0);
+    lastFrame = now;
+
+    if (state.sweeping) {
+        const prev = state.sweepAngle;
+        state.sweepAngle = (prev + RATES[rateIdx].v * dt) % 360;
+        if (state.sweepAngle < prev) {
+            state.revolutions++;
+            if (state.revolutions === 1 && state.phase === "sweeping") finishFirstPass();
+        }
+        const t = rad(state.sweepAngle);
+        sweepLine.setAttribute("x2", CENTRE + Math.sin(t) * EDGE_R);
+        sweepLine.setAttribute("y2", CENTRE - Math.cos(t) * EDGE_R);
+        sweepTrail.style.transform = "rotate(" + state.sweepAngle + "deg)";
+        const whole = Math.round(state.sweepAngle);
+        if (whole !== lastBearing) { lastBearing = whole; setTubes(brgDigits, whole); }
+
+        state.contacts.forEach(c => {
+            if (crossed(prev, state.sweepAngle, c.bearing)) {
+                if (!c.revealed) revealContact(c); else relight(c.node);
+            }
+        });
+        state.guesses.forEach(m => {
+            if (crossed(prev, state.sweepAngle, m.bearing)) relight(m.node);
+        });
+    }
+
+    /* needle follows how close the beam is to a contact */
+    let signal = 0;
+    if (state.power) {
+        [...state.contacts, ...state.guesses].forEach(c => {
+            if (c.revealed === false) return;
+            let d = Math.abs(state.sweepAngle - c.bearing);
+            d = Math.min(d, 360 - d);
+            const beam = Math.exp(-(d * d) / 60);
+            const strength = beam * (1 - Math.min(1, c.distance / (rangeMiles() || 1)) * 0.55);
+            if (strength > signal) signal = strength;
+        });
+        signal = Math.min(1, signal + Math.random() * 0.035);
+    }
+    needle += (signal - needle) * Math.min(1, dt * 9);
+    meterNeedle.setAttribute("transform", "rotate(" + (-50 + needle * 100) + " 80 84)");
+
+    requestAnimationFrame(frame);
+}
+
+function revealContact(c) {
+    c.revealed = true;
+    c.node.classList.add("is-live");
+    relight(c.node);
+    flashRing(c.pos.x, c.pos.y);
+    Sound.ping(380 + (1 - Math.min(1, c.distance / (rangeMiles() || 1))) * 520, 0.24);
+    blinkLamp("contact", 420);
+    setCounter(contactCount, state.contacts.filter(x => x.revealed).length);
+    print("CONTACT · BRG " + String(Math.round(c.bearing)).padStart(3, "0") +
+          " · RNG " + String(Math.round(c.distance)).padStart(4, " ") + " MI · IDENT " +
+          c.name.toUpperCase(), "contact");
+}
+
+function finishFirstPass() {
+    state.phase = "play";
+    setStatus("AWAITING DESIGNATION");
+    guessInput.disabled = false;
+    guessBtn.disabled = false;
+    print("SWEEP COMPLETE. " + state.contacts.length + " STATION(S) FIXED. NAME THE CITY BENEATH YOU.", "sys");
+}
+
+/* ── 11. lamps, status, tiles ────────────────────────────────── */
+function setLamp(name, on) { lamps[name].classList.toggle("is-on", on); }
+function blinkLamp(name, ms) {
+    setLamp(name, true);
+    clearTimeout(lamps[name]._t);
+    lamps[name]._t = setTimeout(() => setLamp(name, false), ms);
+}
+function setStatus(text, tone) {
+    statusLine.textContent = text;
+    statusLine.className = tone ? "is-" + tone : "";
+}
+
+function renderTiles(showAll) {
+    hintTiles.innerHTML = "";
+    if (!state.secret) return;
+    [...state.secret.name].forEach((ch, i) => {
+        if (ch === " ") {
+            const gap = document.createElement("span");
+            gap.className = "tile tile--gap";
+            hintTiles.appendChild(gap);
+            return;
+        }
+        const tile = document.createElement("span");
+        const lit = showAll || state.revealed.includes(i);
+        tile.className = "tile" + (lit ? " is-lit" : "");
+        tile.textContent = lit ? ch.toUpperCase() : "";
+        hintTiles.appendChild(tile);
+    });
+}
+function revealLetter() {
+    const hidden = [...state.secret.name]
+        .map((ch, i) => (ch !== " " && !state.revealed.includes(i)) ? i : -1)
+        .filter(i => i >= 0);
+    if (!hidden.length) return;
+    const pick = hidden[Math.floor(Math.random() * hidden.length)];
+    state.revealed.push(pick);
+    renderTiles();
+    const tile = hintTiles.children[pick];
+    if (tile) { tile.classList.add("is-flip"); setTimeout(() => tile.classList.remove("is-flip"), 360); }
+    return hidden.length - 1;
+}
+
+/* ── 12. a new expedition ────────────────────────────────────── */
+function newExpedition() {
+    filteredPool = poolForFilter();
+    const source = filteredPool.length
+        ? filteredPool.map(c => ({ name: c.name, coords: c.coords, countryCode: c.countryCode }))
+        : defaultPool.map(c => ({ name: c.name, coords: c.center, countryCode: null }));
+    state.secret = source[Math.floor(Math.random() * source.length)];
+
+    state.contacts = []; state.guesses = []; state.revealed = [];
+    state.attempts = 0; state.revolutions = 0; state.sweepAngle = 0;
+    state.phase = "sweeping";
+    placedBoxes = [];
+    contactLayer.innerHTML = ""; guessLayer.innerHTML = ""; fxLayer.innerHTML = "";
+    setCounter(contactCount, 0);
+    attemptLine.textContent = "MARKS 00";
+    guessInput.value = ""; guessInput.disabled = true; guessBtn.disabled = true;
+    setStatus("SWEEPING");
+    renderTiles();
+
+    const picks = pickContacts(state.secret.coords);
+    scaleMiles = picks.length ? Math.max(...picks.map(p => p.distance)) * 1.1 : 600;
+    setTubes(rngDigits, rangeMiles());
+    for (let i = 1; i <= 4; i++) {
+        const label = document.getElementById("ring-" + i);
+        if (label) label.textContent = Math.round(rangeMiles() * i / 4) + " MI";
+    }
+
+    state.contacts = picks.map(p => {
+        const drawn = drawTrace(contactLayer, {
+            name: p.city.name, distance: p.distance, bearing: p.bearing, kind: "contact"
+        });
+        return {
+            name: p.city.name, distance: p.distance, bearing: p.bearing,
+            node: drawn.g, pos: drawn.pos, revealed: false
+        };
+    });
+
+    setSweeping(true);
+    print("── EXPEDITION " + String(Math.floor(Math.random() * 8999) + 1000) + " ──", "sys");
+    print("POSITION UNKNOWN. OUTER RING " + Math.round(rangeMiles()) + " MI. SWEEPING FOR STATIONS.", "sys");
+    if (filteredPool.length) print("SECTOR RESTRICTED TO " + countryInput.value.toUpperCase() + ".", "sys");
+}
+
+/* ── 13. marking a guess ─────────────────────────────────────── */
+function lookupCity(name) {
+    const target = norm(name);
+    if (!target) return null;
+    const hits = gazetteer.filter(c => norm(c.name) === target);
+    if (!hits.length) {
+        const fallback = defaultPool.find(c => norm(c.name) === target);
+        return fallback ? { name: fallback.name, coords: fallback.center, pop: 0 } : null;
+    }
+    if (hits.length === 1) return hits[0];
+
+    let pool = hits;
+    if (state.secret.countryCode) {
+        const same = hits.filter(c => c.countryCode === state.secret.countryCode);
+        if (same.length) pool = same;
+    }
+    const inRange = pool.filter(c => distanceMiles(state.secret.coords, c.coords) <= rangeMiles());
+    const shortlist = inRange.length ? inRange : pool;
+    return shortlist.reduce((best, c) => (c.pop || 0) > (best.pop || 0) ? c : best);
+}
+
+function mark() {
+    if (state.phase !== "play") return;
+    const typed = guessInput.value.trim();
+    if (!typed) return;
+    guessInput.value = "";
+
+    if (norm(typed) === norm(state.secret.name)) return win();
+
+    const city = lookupCity(typed);
+    if (!city) {
+        Sound.burst(0.12, 700, 1.2, 0.14, "lowpass");
+        setStatus("NOT IN GAZETTEER", "bad");
+        print("QUERY " + typed.toUpperCase() + " — NO SUCH STATION ON FILE. NOT COUNTED.", "sys");
+        return;
+    }
+
+    state.attempts++;
+    attemptLine.textContent = "MARKS " + String(state.attempts).padStart(2, "0");
+
+    const already = state.guesses.some(m => norm(m.name) === norm(city.name));
+    if (!already) {
+        const distance = distanceMiles(state.secret.coords, city.coords);
+        const bearing  = bearingDeg(state.secret.coords, city.coords);
+        const drawn = drawTrace(guessLayer, { name: city.name, distance, bearing, kind: "guess" });
+        drawn.g.classList.add("is-live");
+        relight(drawn.g);
+        flashRing(drawn.pos.x, drawn.pos.y);
+        state.guesses.push({
+            name: city.name, distance, bearing,
+            node: drawn.g, pos: drawn.pos, revealed: true
+        });
+        print("MARK · " + city.name.toUpperCase() + " · BRG " + String(Math.round(bearing)).padStart(3, "0") +
+              " · RNG " + Math.round(distance) + " MI · NOT YOUR POSITION.", "neg");
+    }
+
+    Sound.fault();
+    blinkLamp("fault", 1800);
+    const left = revealLetter();
+    if (left === 0) return lose();
+    setStatus("NEGATIVE — ONE LETTER GIVEN", "bad");
+}
+
+function win() {
+    state.phase = "won";
+    renderTiles(true);
+    guessInput.disabled = true; guessBtn.disabled = true;
+    setStatus("POSITION FIXED", "good");
+    setLamp("contact", true);
+    Sound.fanfare();
+
+    for (let i = 0; i < 3; i++) {
+        setTimeout(() => flashRing(CENTRE, CENTRE), i * 180);
+    }
+    const stamp = el("text", {
+        x: CENTRE, y: CENTRE - 26, "text-anchor": "middle", "font-size": 26,
+        fill: "var(--phosphor)", "letter-spacing": 3, class: "fx-fix"
+    });
+    stamp.textContent = state.secret.name.toUpperCase();
+    const sub = el("text", {
+        x: CENTRE, y: CENTRE - 6, "text-anchor": "middle", "font-size": 13,
+        fill: "var(--phosphor)", "letter-spacing": 4, opacity: .85, class: "fx-fix"
+    });
+    sub.textContent = "POSITION FIXED";
+    fxLayer.appendChild(stamp); fxLayer.appendChild(sub);
+
+    print("POSITION FIXED: " + state.secret.name.toUpperCase() + ". " +
+          state.attempts + " MARK(S) EXPENDED. WELL DONE.", "contact");
+}
+
+function lose() {
+    state.phase = "lost";
+    renderTiles(true);
+    guessInput.disabled = true; guessBtn.disabled = true;
+    setStatus("SIGNAL LOST", "bad");
+    blinkLamp("fault", 3000);
+    Sound.fault();
+    print("TRANSMITTER SILENT. THE CITY WAS " + state.secret.name.toUpperCase() + ".", "neg");
+}
+
+/* ── 14. switches, knobs, keys ───────────────────────────────── */
+function setSweeping(on) {
+    state.sweeping = on;
+    setLamp("sweep", on);
+    sweepLine.setAttribute("opacity", on ? 1 : 0.25);
+    sweepTrail.style.opacity = on ? 1 : 0;
+    const sw = document.getElementById("sweep-switch");
+    sw.classList.toggle("is-on", on);
+    sw.setAttribute("aria-pressed", String(on));
+    sw.querySelector(".toggle__state").textContent = on ? "RUN" : "HOLD";
+}
+
+function setPower(on) {
+    state.power = on;
+    const sw = document.getElementById("power-switch");
+    sw.classList.toggle("is-on", on);
+    sw.setAttribute("aria-pressed", String(on));
+    sw.querySelector(".toggle__state").textContent = on ? "ON" : "OFF";
+    setLamp("power", on);
+
+    if (on) {
+        Sound.init(); Sound.resume(); Sound.warmup(); Sound.humOn();
+        rig.classList.add("is-booting");
+        state.booting = true;
+        setStatus("HEATERS WARMING");
+        print("HOLLOWAY & VANCE TRIANGULATION SET MK IV", "sys");
+        print("HEATERS 6.3V ... TRACE ALIGNED ... GAZETTEER LOADED", "sys");
+        setTimeout(() => {
+            rig.classList.remove("is-booting");
+            rig.classList.add("is-warm");
+            state.booting = false;
+            newBtn.disabled = false;
+            newExpedition();
+        }, 1500);
+    } else {
+        Sound.humOff();
+        rig.classList.remove("is-warm", "is-booting");
+        setSweeping(false);
+        state.phase = "cold";
+        guessInput.disabled = true; guessBtn.disabled = true; newBtn.disabled = true;
+        setStatus("STANDING BY");
+        setTubes(brgDigits, 0, true); setTubes(rngDigits, 0, true);
+        ["sweep", "contact", "fault"].forEach(l => setLamp(l, false));
+        print("POWER REMOVED. TUBE COOLING.", "sys");
+    }
+}
+
+document.getElementById("power-switch").addEventListener("click", () => {
+    Sound.init(); Sound.resume(); Sound.clack();
+    setPower(!state.power);
+});
+document.getElementById("sweep-switch").addEventListener("click", () => {
+    if (!state.power) return;
+    Sound.clack();
+    setSweeping(!state.sweeping);
+});
+document.getElementById("audio-switch").addEventListener("click", function () {
+    Sound.init(); Sound.resume();
+    Sound.enabled = !Sound.enabled;
+    this.classList.toggle("is-on", Sound.enabled);
+    this.setAttribute("aria-pressed", String(Sound.enabled));
+    this.querySelector(".toggle__state").textContent = Sound.enabled ? "ON" : "OFF";
+    if (Sound.enabled) { Sound.clack(); if (state.power) Sound.humOn(); }
+    else Sound.humOff();
+});
+
+function wireKnob(id, list, onChange) {
+    const knob = document.getElementById(id);
+    knob.addEventListener("click", () => {
+        const next = (knob._i = ((knob._i === undefined ? (id === "knob-focus" ? 0 : 1) : knob._i) + 1) % list.length);
+        knob.querySelector(".knob__dial").style.transform = "rotate(" + list[next].turn + "deg)";
+        knob.querySelector(".knob__value").textContent = list[next].label;
+        Sound.tick(); Sound.thud(180, 0.09);
+        onChange(next);
+    });
+}
+wireKnob("knob-rate", RATES, i => { rateIdx = i; });
+wireKnob("knob-persist", PERSIST, i => {
+    persistIdx = i;
+    document.documentElement.style.setProperty("--decay", PERSIST[i].v);
+});
+wireKnob("knob-focus", FOCUS, i => {
+    focusIdx = i;
+    radar.style.filter = FOCUS[i].v === "none" ? "" : FOCUS[i].v;
+});
+
+guessBtn.addEventListener("click", () => { Sound.clack(); mark(); });
+guessInput.addEventListener("keydown", e => { if (e.key === "Enter") { Sound.clack(); mark(); } });
+newBtn.addEventListener("click", () => {
+    if (!state.power) return;
+    Sound.clack();
+    newExpedition();
+});
+filterToggle.addEventListener("click", () => {
+    Sound.tick();
+    const open = filterPanel.hasAttribute("hidden");
+    if (open) filterPanel.removeAttribute("hidden"); else filterPanel.setAttribute("hidden", "");
+    filterToggle.textContent = (open ? "◆ CLOSE SECTOR PANEL" : "◆ SECTOR RESTRICTION");
+});
+
+/* ── 15. the gazetteer ───────────────────────────────────────── */
+async function loadGazetteer() {
+    try {
+        const res = await fetch(citiesURL);
+        const raw = await res.json();
+        const countries = new Set();
+        gazetteer = raw.map(c => {
+            let code = "unknown";
+            if (c.id && c.id.includes("-")) code = c.id.split("-").pop().toLowerCase();
+            const countryName = isoCountryMap[code] || "Unknown";
+            if (countryName !== "Unknown") countries.add(countryName);
+            return {
+                name: c.name,
+                coords: [parseFloat(c.lng), parseFloat(c.lat)],
+                pop: parseInt(c.pop || 0, 10),
+                countryCode: code, countryName, fc: c.fc
+            };
+        }).filter(c => isFinite(c.coords[0]) && isFinite(c.coords[1]));
+
+        const list = document.getElementById("countries");
+        [...countries].sort().forEach(name => {
+            const opt = document.createElement("option");
+            opt.value = name;
+            list.appendChild(opt);
+        });
+        print("GAZETTEER: " + gazetteer.length.toLocaleString() + " STATIONS ON FILE.", "sys");
+    } catch (err) {
+        print("GAZETTEER UNREACHABLE — RUNNING ON THE ONBOARD CARD OF " +
+              defaultPool.length + " CITIES.", "neg");
+    }
+}
+
+/* ── 16. cold start ──────────────────────────────────────────── */
+buildFace();
+makeTubes(brgDigits, 3);
+makeTubes(rngDigits, 4);
+makeCounter(contactCount, 2);
+setTubes(brgDigits, 0, true);
+setTubes(rngDigits, 0, true);
+print("SET COLD. THROW POWER TO WARM THE TUBE.", "sys");
+loadGazetteer();
+requestAnimationFrame(frame);
+
+    </script>
+</body>
+</html>
